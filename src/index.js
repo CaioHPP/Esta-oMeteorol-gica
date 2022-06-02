@@ -12,6 +12,7 @@ app.get("/leitura", async (req, res) => {
   const leitura = await prisma.leitura.findMany(
     {
       limit: 10,
+
       include: {
         Temperatura: true,
         Pressao: true,
