@@ -1,1 +1,1 @@
-# Esta-oMeteorol-gica
+# API para uma Estação Meteorológica em Desenvolvimento
