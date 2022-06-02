@@ -1,0 +1,19 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "description": "express-prisma-sqlite",
+  "main": "./src/index.js",
+  "license": "MIT",
+  "type": "module",
+  "repository": "https://github.com/CaioHPP/EstacaoMeteorologica.git",
+  "author": "CaioHPP <caioutf@gmail.com>",
+  "dependencies": {
+    "@prisma/client": "3.14.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16",
+    "prisma": "^3.14.0"
+  }
+}
