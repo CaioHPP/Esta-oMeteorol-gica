@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 
-app.get("/leitura", async (req, res) => {
+app.get("/leitura/recentes", async (req, res) => {
   const leitura = await prisma.leitura.findMany({
     take: 30,
 
@@ -29,7 +29,7 @@ app.get("/leitura", async (req, res) => {
   res.json(leitura);
 });
 
-app.get("/leiturafiltrada", async (req, res) => {
+app.get("/leitura/filtrado", async (req, res) => {
   let datamin = new Date(req.query.datamin);
   let datamax = new Date(req.query.datamax);
 
@@ -38,6 +38,33 @@ app.get("/leiturafiltrada", async (req, res) => {
       createdAt: {
         gte: datamin,
         lt: datamax,
+      },
+    },
+    include: {
+      Temperatura: true,
+      Pressao: true,
+      Altitude: true,
+      VelocidadeVento: true,
+      DirecaoVento: true,
+      Precipitacao: true,
+      UmidadeSolo: true,
+      UmidadeRelativa: true,
+    },
+    orderBy: {
+      id: "asc",
+    },
+  });
+  res.json(leitura);
+});
+
+app.get("/leitura/dia", async (req, res) => {
+  let data = new Date(req.query.data);
+
+  const leitura = await prisma.leitura.findMany({
+    where: {
+      createdAt: {
+        gte: data,
+        lt: new Date(data.getTime() + 86400000), //86400000 = 1 dia
       },
     },
     include: {
