@@ -8,6 +8,15 @@ const prisma = new PrismaClient();
 
 app.use(express.json());
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, GET"
+  );
+  next();
+});
+
 app.get("/leitura/recentes", async (req, res) => {
   const leitura = await prisma.leitura.findMany({
     take: 30,
