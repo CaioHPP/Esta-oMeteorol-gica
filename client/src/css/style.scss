@@ -214,7 +214,11 @@ section {
     }
   }
   .grafico {
-    width: 500px;
+    width: 80%;
     height: 500px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
   }
 }

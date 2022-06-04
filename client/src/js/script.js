@@ -3,70 +3,78 @@ import { getFiltrado } from "./serviçoAPI.js"; // Importa o serviço
 import { getDia } from "./serviçoAPI.js"; // Importa o serviço
 
 window.onload = function () {
-  getRecentes().then(function (response) {
-    console.log(response);
-    response.forEach(function (leitura) {
-      chart.data.datasets.forEach((dataset, indice) => {
-        if (indice < leitura.Temperatura.length) {
-          dataset.data.push(leitura.Temperatura[indice]);
-        }
-      });
-    });
-    chart.update();
+  const recentes = getRecentes().then((response) => {
+    return response;
   });
+  let ultimaLeitura = recentes[0];
+  response.reverse();
+
+  const datasets = [];
+  function preencherDatasets(response) {
+    response.forEach((leitura) => {
+      if (leitura.isArray()){
+        leitura.forEach((leitura) => {
+          );
+        }
+
+      }
+      }
+
+  response.forEach(function (leitura) {
+    myChart.data.datasets.forEach((dataset, indice) => {
+      if (indice < leitura.Temperatura.length) {
+        dataset.data.push(leitura.Temperatura[indice].valor / 10);
+      } else {
+        dataset.data.push(leitura.UmidadeRelativa[0].valor);
+      }
+    });
+    myChart.data.labels.push(new Date(leitura.createdAt).toLocaleTimeString());
+  });
+
+  const labels = [];
 
   const ctx = document.getElementById("myChart").getContext("2d");
 
-  const labels = [
-    "Segunda",
-    "Terça",
-    "Quarta",
-    "Quinta",
-    "Sexta",
-    "Sábado",
-    "Domingo",
-  ];
   const data = {
     labels: labels,
     datasets: [
       {
         label: "Temperatura - Sensor 1",
         data: [],
-        borderColor: "rgba(255, 99, 132, 1)",
+        borderColor: "#B71212",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         yAxisID: "y",
       },
       {
         label: "Temperatura - Sensor 2",
         data: [],
-        borderColor: "rgba(255, 99, 132, 1)",
+        borderColor: "#8B0000",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         yAxisID: "y",
       },
       {
         label: "Temperatura - Sensor 3",
         data: [],
-        borderColor: "rgba(255, 99, 132, 1)",
+        borderColor: "#D13287",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         yAxisID: "y",
       },
       {
         label: "Umidade Relativa - Sensor 1",
-        data: [5, 5, 5, 5, 5, 5, 5],
-        borderColor: "rgba(255, 99, 132, 1)",
+        labelColor: "#1A00FF",
+        data: [],
+        borderColor: "#1A00FF",
         backgroundColor: "rgba(255, 99, 132, 0.2)",
         yAxisID: "y1",
       },
     ],
   };
-  // </block:setup>
 
-  // <block:config:0>
   const config = {
     type: "line",
     data: data,
     options: {
-      responsive: true,
+      responsive: false,
       interaction: {
         mode: "index",
         intersect: false,
@@ -100,5 +108,10 @@ window.onload = function () {
   // </block:config>
 
   const myChart = new Chart(ctx, config);
+
+  getRecentes().then(function (response) {
+    console.log(myChart.data.labels);
+    myChart.update();
+  });
   console.log("ADSD");
 };
