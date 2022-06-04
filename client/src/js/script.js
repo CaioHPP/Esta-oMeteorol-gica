@@ -40,6 +40,7 @@ window.onload = async function () {
         label: temperatura.sensor, // nome do sensor
         data: data, // dados
         unidade: temperatura.unidade, // unidade
+        tipo: "Temperatura", // tipo
       };
       datasets.push(datasetTemperatura); // adiciona o dataset na lista
     });
@@ -55,6 +56,7 @@ window.onload = async function () {
         label: pressao.sensor,
         data: data,
         unidade: pressao.unidade,
+        tipo: "Pressao",
       };
       datasets.push(datasetPressao); // adiciona o dataset na lista
     });
@@ -67,12 +69,13 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((umidadeRelativa) => {
-        data.push(umidadeRelativa.valor / 10);
+        data.push(umidadeRelativa.valor);
       });
       let datasetUmidadeRelativa = {
         label: umidadeRelativa.sensor,
         data: data,
         unidade: umidadeRelativa.unidade,
+        tipo: "UmidadeRelativa",
       };
       datasets.push(datasetUmidadeRelativa); // adiciona o dataset na lista
     });
@@ -85,12 +88,13 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((umidadeSolo) => {
-        data.push(umidadeSolo.valor / 10);
+        data.push(umidadeSolo.valor);
       });
       let datasetUmidadeSolo = {
         label: umidadeSolo.sensor,
         data: data,
         unidade: umidadeSolo.unidade,
+        tipo: "UmidadeSolo",
       };
       datasets.push(datasetUmidadeSolo); // adiciona o dataset na lista
     });
@@ -111,14 +115,14 @@ window.onload = async function () {
         label: velocidadeVento.sensor,
         data: data,
         unidade: velocidadeVento.unidade,
-        tipo: "media",
+        tipo: "mediaVelocidadeVento",
       };
 
       let datasetVelocidadeVentoMax = {
         label: velocidadeVento.sensor,
         data: data2,
         unidade: velocidadeVento.unidade,
-        tipo: "max",
+        tipo: "maxVelocidadeVento",
       };
       datasets.push(datasetVelocidadeVentoMedia); // adiciona o dataset na lista
       datasets.push(datasetVelocidadeVentoMax); // adiciona o dataset na lista
@@ -138,6 +142,7 @@ window.onload = async function () {
         label: direcaoVento.sensor,
         data: data,
         unidade: direcaoVento.unidade,
+        tipo: "DirecaoVento",
       };
       datasets.push(datasetDirecaoVento);
     });
@@ -156,6 +161,7 @@ window.onload = async function () {
         label: precipitacao.sensor,
         data: data,
         unidade: precipitacao.unidade,
+        tipo: "Precipitacao",
       };
       datasets.push(datasetPrecipitacao); // adiciona o dataset na lista
     });
@@ -167,81 +173,197 @@ window.onload = async function () {
   }
 
   preencherDatasets(); // preenche os datasets
-  console.log(datasets);
 
-  const ctx = document.getElementById("myChart").getContext("2d");
+  function datasetsTemperatura() {
+    const datasetsTemperatura = datasets.filter(
+      (dataset) => dataset.tipo === "Temperatura"
+    );
+    datasetsTemperatura.forEach((dataset) => {
+      dataset.borderColor = "rgba(255, 99, 132, 1)";
+      dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
+      dataset.pointStyle = "rectRot";
+      dataset.pointRadius = 5;
+      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.yAxisID = "y";
+    });
+    return datasetsTemperatura;
+  }
 
-  const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: "Temperatura - Sensor 1",
-        data: [],
-        borderColor: "#B71212",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        yAxisID: "y",
-      },
-      {
-        label: "Temperatura - Sensor 2",
-        data: [],
-        borderColor: "#8B0000",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        yAxisID: "y",
-      },
-      {
-        label: "Temperatura - Sensor 3",
-        data: [],
-        borderColor: "#D13287",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        yAxisID: "y",
-      },
-      {
-        label: "Umidade Relativa - Sensor 1",
-        labelColor: "#1A00FF",
-        data: [],
-        borderColor: "#1A00FF",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        yAxisID: "y1",
-      },
-    ],
-  };
+  function datasetsPressao() {
+    const datasetsPressao = datasets.filter(
+      (dataset) => dataset.tipo === "Pressao"
+    );
+    datasetsPressao.forEach((dataset) => {
+      dataset.borderColor = "rgba(54, 162, 235, 1)";
+      dataset.backgroundColor = "rgba(54, 162, 235, 0.5)";
+      dataset.pointStyle = "rectRot";
+      dataset.pointRadius = 5;
+      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.yAxisID = "y1";
+    });
+    return datasetsPressao;
+  }
 
-  const config = {
-    type: "line",
-    data: data,
-    options: {
-      responsive: false,
-      interaction: {
-        mode: "index",
-        intersect: false,
-      },
-      stacked: false,
-      plugins: {
-        title: {
-          display: true,
-          text: "Chart.js Line Chart - Multi Axis",
+  function datasetsUmidadeRelativa() {
+    const datasetsUmidadeRelativa = datasets.filter(
+      (dataset) => dataset.tipo === "UmidadeRelativa"
+    );
+    datasetsUmidadeRelativa.forEach((dataset) => {
+      dataset.borderColor = "rgba(255, 206, 86, 1)";
+      dataset.backgroundColor = "rgba(255, 206, 86, 0.5)";
+      dataset.pointStyle = "rectRot";
+      dataset.pointRadius = 5;
+      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.yAxisID = "y1";
+    });
+    return datasetsUmidadeRelativa;
+  }
+
+  function datasetsUmidadeSolo() {
+    const datasetsUmidadeSolo = datasets.filter(
+      (dataset) => dataset.tipo === "UmidadeSolo"
+    );
+    datasetsUmidadeSolo.forEach((dataset) => {
+      dataset.borderColor = "rgba(75, 192, 192, 1)";
+      dataset.backgroundColor = "rgba(75, 192, 192, 0.5)";
+      dataset.pointStyle = "rectRot";
+      dataset.pointRadius = 5;
+      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.yAxisID = "y1";
+    });
+    return datasetsUmidadeSolo;
+  }
+
+  function datasetsVelocidadeVentoMedia() {
+    const datasetsVelocidadeVentoMedia = datasets.filter(
+      (dataset) => dataset.tipo === "mediaVelocidadeVento"
+    );
+    datasetsVelocidadeVentoMedia.forEach((dataset) => {
+      dataset.borderColor = "rgba(255, 159, 64, 1)";
+      dataset.backgroundColor = "rgba(255, 159, 64, 0.5)";
+      dataset.pointStyle = "rectRot";
+      dataset.pointRadius = 5;
+      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.yAxisID = "y";
+    });
+    return datasetsVelocidadeVentoMedia;
+  }
+
+  function datasetsVelocidadeVentoMax() {
+    const datasetsVelocidadeVentoMax = datasets.filter(
+      (dataset) => dataset.tipo === "maxVelocidadeVento"
+    );
+    datasetsVelocidadeVentoMax.forEach((dataset) => {
+      dataset.borderColor = "rgba(255, 99, 132, 1)";
+      dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
+      dataset.pointStyle = "rectRot";
+      dataset.pointRadius = 5;
+      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.yAxisID = "y";
+    });
+    return datasetsVelocidadeVentoMax;
+  }
+
+  function datasetsDirecaoVento() {
+    const datasetsDirecaoVento = datasets.filter(
+      (dataset) => dataset.tipo === "DirecaoVento"
+    );
+    datasetsDirecaoVento.forEach((dataset) => {
+      dataset.backgroundColor = [
+        "rgba(255, 99, 132, 0.5)",
+        "rgba(255, 159, 64, 0.5)",
+        "rgba(255, 205, 86, 0.5)",
+        "rgba(75, 192, 192, 0.5)",
+        "rgba(54, 162, 235, 0.5)",
+        "rgba(153, 102, 255, 0.5)",
+        "rgba(201, 203, 207, 0.5)",
+        "rgba(61, 226, 255, 0.5)",
+      ];
+    });
+    return datasetsDirecaoVento;
+  }
+
+  function datasetsPrecipitacao() {
+    const datasetsPrecipitacao = datasets.filter(
+      (dataset) => dataset.tipo === "Precipitacao"
+    );
+    datasetsPrecipitacao.forEach((dataset) => {
+      dataset.borderColor = "rgba(255, 99, 132, 1)";
+      dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
+      dataset.pointStyle = "rectRot";
+      dataset.pointRadius = 5;
+      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.yAxisID = "y";
+      dataset.stack = "combined";
+      dataset.type = "bar";
+    });
+    return datasetsPrecipitacao;
+  }
+
+  function geraConfiguracao(tipoGrafico, labels) {
+    const data = {
+      labels: labels,
+      datasets: [],
+    };
+    const config = {};
+    if (tipoGrafico === "Temperatura/UmidadeRelativa") {
+      data.datasets.push(datasetsTemperatura());
+      data.datasets.push(datasetsUmidadeRelativa());
+      config.type = "line";
+      config.options = {
+        responsive: false,
+        interaction: {
+          mode: "index",
+          intersect: false,
         },
-      },
-      scales: {
-        y: {
-          type: "linear",
-          display: true,
-          position: "left",
-        },
-        y1: {
-          type: "linear",
-          display: true,
-          position: "right",
-
-          // grid line settings
-          grid: {
-            drawOnChartArea: false, // only want the grid lines for one axis to show up
+        stacked: false,
+        plugins: {
+          title: {
+            display: true,
+            text: "Temperatura x Umidade Relativa",
+          },
+          legend: {
+            labels: {
+              usePointStyle: true,
+            },
           },
         },
-      },
-    },
-  };
-  // </block:config>
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+            title: {
+              display: true,
+              text: "Temperatura (°C)",
+            },
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "Umidade Relativa (%)",
+            },
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+          },
+        },
+      };
+    }
 
-  const myChart = new Chart(ctx, config);
+    data.datasets = Object.values(data.datasets).flat();
+    config.data = data;
+    return config;
+  }
+  // </block:config>
+  const ctx = document
+    .getElementById("Temperatura/UmidadeRelativa")
+    .getContext("2d");
+  const myChart = new Chart(
+    ctx,
+    geraConfiguracao("Temperatura/UmidadeRelativa", labels)
+  );
 };
