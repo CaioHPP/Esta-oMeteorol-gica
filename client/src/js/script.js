@@ -10,6 +10,8 @@ window.onload = async function () {
   let ultimaLeitura = recentes[0]; // pega a ultima leitura
   recentes.reverse(); // inverte a ordem
 
+  console.log(recentes);
+
   function retornaLeiturasPorSensor(nomeSensor, unidade) {
     const lista = recentes.map((leitura) => {
       leitura = Object.values(leitura).flat();
@@ -166,6 +168,25 @@ window.onload = async function () {
       datasets.push(datasetPrecipitacao); // adiciona o dataset na lista
     });
 
+    ultimaLeitura.Altitude.forEach((altitude) => {
+      // percorre as altitudes
+      const leitura = retornaLeiturasPorSensor(
+        altitude.sensor,
+        altitude.unidade
+      );
+      let data = [];
+      leitura.forEach((altitude) => {
+        data.push(altitude.valor / 10);
+      });
+      let datasetAltitude = {
+        label: altitude.sensor,
+        data: data,
+        unidade: altitude.unidade,
+        tipo: "Altitude",
+      };
+      datasets.push(datasetAltitude); // adiciona o dataset na lista
+    });
+
     recentes.forEach((leitura) => {
       // percorre os recentes
       labels.push(new Date(leitura.createdAt).toLocaleTimeString()); // adiciona o horario da leitura ao array de labels
@@ -181,10 +202,15 @@ window.onload = async function () {
     datasetsTemperatura.forEach((dataset) => {
       dataset.borderColor = "rgba(255, 99, 132, 1)";
       dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
+      dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 5;
-      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.pointRadius = 7;
+      dataset.pointHoverRadius = 10;
+      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
+      dataset.pointBorderColor = "rgba(255, 99, 132, 0.5)";
       dataset.yAxisID = "y";
+      dataset.cubicInterpolationMode = "monotone";
+      dataset.tension = 0.4;
     });
     return datasetsTemperatura;
   }
@@ -196,10 +222,16 @@ window.onload = async function () {
     datasetsPressao.forEach((dataset) => {
       dataset.borderColor = "rgba(54, 162, 235, 1)";
       dataset.backgroundColor = "rgba(54, 162, 235, 0.5)";
+      dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 5;
-      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.pointRadius = 7;
+      dataset.pointHoverRadius = 10;
+      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
+      dataset.pointBorderColor = "rgba(54, 162, 235, 0.5)";
       dataset.yAxisID = "y1";
+      dataset.cubicInterpolationMode = "monotone";
+      dataset.tension = 0.4;
+      dataset.stack = "combined";
     });
     return datasetsPressao;
   }
@@ -211,10 +243,15 @@ window.onload = async function () {
     datasetsUmidadeRelativa.forEach((dataset) => {
       dataset.borderColor = "rgba(255, 206, 86, 1)";
       dataset.backgroundColor = "rgba(255, 206, 86, 0.5)";
+      dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 5;
-      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.pointRadius = 7;
+      dataset.pointHoverRadius = 10;
+      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
+      dataset.pointBorderColor = "rgba(255, 206, 86, 0.5)";
       dataset.yAxisID = "y1";
+      dataset.cubicInterpolationMode = "monotone";
+      dataset.tension = 0.4;
     });
     return datasetsUmidadeRelativa;
   }
@@ -226,10 +263,15 @@ window.onload = async function () {
     datasetsUmidadeSolo.forEach((dataset) => {
       dataset.borderColor = "rgba(75, 192, 192, 1)";
       dataset.backgroundColor = "rgba(75, 192, 192, 0.5)";
+      dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 5;
-      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.pointRadius = 7;
+      dataset.pointHoverRadius = 10;
+      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
+      dataset.pointBorderColor = "rgba(75, 192, 192, 0.5)";
       dataset.yAxisID = "y1";
+      dataset.cubicInterpolationMode = "monotone";
+      dataset.tension = 0.4;
     });
     return datasetsUmidadeSolo;
   }
@@ -241,11 +283,17 @@ window.onload = async function () {
     datasetsVelocidadeVentoMedia.forEach((dataset) => {
       dataset.borderColor = "rgba(255, 159, 64, 1)";
       dataset.backgroundColor = "rgba(255, 159, 64, 0.5)";
+      dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 5;
-      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.pointRadius = 7;
+      dataset.pointHoverRadius = 10;
+      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
+      dataset.pointBorderColor = "rgba(255, 159, 64, 0.5)";
       dataset.yAxisID = "y";
+      dataset.cubicInterpolationMode = "monotone";
+      dataset.tension = 0.4;
     });
+
     return datasetsVelocidadeVentoMedia;
   }
 
@@ -256,10 +304,17 @@ window.onload = async function () {
     datasetsVelocidadeVentoMax.forEach((dataset) => {
       dataset.borderColor = "rgba(255, 99, 132, 1)";
       dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
+      dataset.borderWidth = 4;
+
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 5;
-      dataset.pointBorderColor = "rgb(0, 0, 0)";
+      dataset.pointRadius = 7;
+      dataset.pointHoverRadius = 10;
+      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
+      dataset.pointBorderColor = "rgba(255, 99, 132, 0.5)";
+
       dataset.yAxisID = "y";
+      dataset.cubicInterpolationMode = "monotone";
+      dataset.tension = 0.4;
     });
     return datasetsVelocidadeVentoMax;
   }
@@ -290,8 +345,10 @@ window.onload = async function () {
     datasetsPrecipitacao.forEach((dataset) => {
       dataset.borderColor = "rgba(255, 99, 132, 1)";
       dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
+      dataset.borderWidth = 0;
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 5;
+      dataset.pointRadius = 7;
+      dataset.pointHoverRadius = 10;
       dataset.pointBorderColor = "rgb(0, 0, 0)";
       dataset.yAxisID = "y";
       dataset.stack = "combined";
@@ -311,10 +368,10 @@ window.onload = async function () {
       data.datasets.push(datasetsUmidadeRelativa());
       config.type = "line";
       config.options = {
-        responsive: false,
+        responsive: true,
         interaction: {
           mode: "index",
-          intersect: false,
+          intersect: true,
         },
         stacked: false,
         plugins: {
@@ -353,17 +410,100 @@ window.onload = async function () {
         },
       };
     }
+    if (tipoGrafico === "Precipitacao/Pressao") {
+      data.datasets.push(datasetsPrecipitacao());
+      data.datasets.push(datasetsPressao());
+      config.type = "line";
+      config.options = {
+        responsive: true,
+        interaction: {
+          mode: "index",
+          intersect: true,
+        },
+        stacked: true,
+        plugins: {
+          title: {
+            display: true,
+            text: "Precipitação x Pressão",
+          },
+          legend: {
+            labels: {
+              usePointStyle: true,
+            },
+          },
+        },
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+            title: {
+              display: true,
+              text: "Precipitação (mm)",
+            },
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "Pressão (hPa)",
+            },
+            grid: {
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+          },
+        },
+      };
+    }
+    if (tipoGrafico === "DirecaoVento") {
+      data.labels = ["N", "NE", "L", "SE", "S", "SO", "O", "NO"];
+      data.datasets.push(datasetsDirecaoVento());
+      config.type = "polarArea";
+      config.options = {
+        responsive: true,
+        scales: {
+          r: {
+            pointLabels: {
+              display: true,
+              centerPointLabels: false,
+              font: {
+                size: 18,
+              },
+            },
+          },
+        },
+        plugins: {
+          legend: {
+            position: "top",
+          },
+          title: {
+            display: true,
+            text: "Chart.js Polar Area Chart With Centered Point Labels",
+          },
+        },
+      };
+    }
 
     data.datasets = Object.values(data.datasets).flat();
     config.data = data;
     return config;
   }
-  // </block:config>
-  const ctx = document
+
+  const graficos = document.querySelectorAll("[tipo-grafico]");
+
+  graficos.forEach((grafico) => {
+    const id = grafico.getAttribute("id");
+    const tipoGrafico = grafico.getAttribute("tipo-grafico");
+    const aplicaGrafico = new Chart(id, geraConfiguracao(tipoGrafico, labels));
+  });
+
+  /*   const ctx = document
     .getElementById("Temperatura/UmidadeRelativa")
     .getContext("2d");
-  const myChart = new Chart(
+   const myChart = new Chart(
     ctx,
     geraConfiguracao("Temperatura/UmidadeRelativa", labels)
-  );
+  );*/
 };
