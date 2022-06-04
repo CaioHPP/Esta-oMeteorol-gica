@@ -2,36 +2,172 @@ import { getRecentes } from "./serviçoAPI.js"; // Importa o serviço
 import { getFiltrado } from "./serviçoAPI.js"; // Importa o serviço
 import { getDia } from "./serviçoAPI.js"; // Importa o serviço
 
-window.onload = function () {
-  const recentes = getRecentes().then((response) => {
-    return response;
+window.onload = async function () {
+  const recentes = await getRecentes().then(({ data }) => {
+    return data;
   });
-  let ultimaLeitura = recentes[0];
-  response.reverse();
 
-  const datasets = [];
-  function preencherDatasets(response) {
-    response.forEach((leitura) => {
-      if (leitura.isArray()){
-        leitura.forEach((leitura) => {
-          );
-        }
+  let ultimaLeitura = recentes[0]; // pega a ultima leitura
+  recentes.reverse(); // inverte a ordem
 
-      }
-      }
-
-  response.forEach(function (leitura) {
-    myChart.data.datasets.forEach((dataset, indice) => {
-      if (indice < leitura.Temperatura.length) {
-        dataset.data.push(leitura.Temperatura[indice].valor / 10);
-      } else {
-        dataset.data.push(leitura.UmidadeRelativa[0].valor);
-      }
+  function retornaLeiturasPorSensor(nomeSensor, unidade) {
+    const lista = recentes.map((leitura) => {
+      leitura = Object.values(leitura).flat();
+      return leitura.find(
+        (valor) => valor.sensor === nomeSensor && valor.unidade === unidade
+      );
     });
-    myChart.data.labels.push(new Date(leitura.createdAt).toLocaleTimeString());
-  });
+    return lista;
+  }
 
   const labels = [];
+  const datasets = []; // cria um array de datasets
+  function preencherDatasets() {
+    // função que preenche o array de datasets
+    ultimaLeitura.Temperatura.forEach((temperatura) => {
+      // percorre as temperaturas
+      const leitura = retornaLeiturasPorSensor(
+        temperatura.sensor,
+        temperatura.unidade
+      ); // pega as leituras do sensor
+      let data = []; // cria um array de dados
+      leitura.forEach((temperatura) => {
+        // percorre as leituras
+        data.push(temperatura.valor); // adiciona o valor da leitura ao array de dados
+      });
+      let datasetTemperatura = {
+        // cria o dataset da temperatura
+        label: temperatura.sensor, // nome do sensor
+        data: data, // dados
+        unidade: temperatura.unidade, // unidade
+      };
+      datasets.push(datasetTemperatura); // adiciona o dataset na lista
+    });
+
+    ultimaLeitura.Pressao.forEach((pressao) => {
+      // percorre as pressões
+      const leitura = retornaLeiturasPorSensor(pressao.sensor, pressao.unidade); // pega as leituras do sensor
+      let data = [];
+      leitura.forEach((pressao) => {
+        data.push(pressao.valor / 10);
+      });
+      let datasetPressao = {
+        label: pressao.sensor,
+        data: data,
+        unidade: pressao.unidade,
+      };
+      datasets.push(datasetPressao); // adiciona o dataset na lista
+    });
+
+    ultimaLeitura.UmidadeRelativa.forEach((umidadeRelativa) => {
+      // percorre as umidades relativas
+      const leitura = retornaLeiturasPorSensor(
+        umidadeRelativa.sensor,
+        umidadeRelativa.unidade
+      );
+      let data = [];
+      leitura.forEach((umidadeRelativa) => {
+        data.push(umidadeRelativa.valor / 10);
+      });
+      let datasetUmidadeRelativa = {
+        label: umidadeRelativa.sensor,
+        data: data,
+        unidade: umidadeRelativa.unidade,
+      };
+      datasets.push(datasetUmidadeRelativa); // adiciona o dataset na lista
+    });
+
+    ultimaLeitura.UmidadeSolo.forEach((umidadeSolo) => {
+      // percorre as umidades solares
+      const leitura = retornaLeiturasPorSensor(
+        umidadeSolo.sensor,
+        umidadeSolo.unidade
+      );
+      let data = [];
+      leitura.forEach((umidadeSolo) => {
+        data.push(umidadeSolo.valor / 10);
+      });
+      let datasetUmidadeSolo = {
+        label: umidadeSolo.sensor,
+        data: data,
+        unidade: umidadeSolo.unidade,
+      };
+      datasets.push(datasetUmidadeSolo); // adiciona o dataset na lista
+    });
+
+    ultimaLeitura.VelocidadeVento.forEach((velocidadeVento) => {
+      // percorre as velocidades de vento
+      const leitura = retornaLeiturasPorSensor(
+        velocidadeVento.sensor,
+        velocidadeVento.unidade
+      );
+      let data = [];
+      let data2 = [];
+      leitura.forEach((velocidadeVento) => {
+        data.push(velocidadeVento.media / 10); // pega a media da velocidade de vento
+        data2.push(velocidadeVento.maximo / 10); // pega o maximo da velocidade de vento
+      });
+      let datasetVelocidadeVentoMedia = {
+        label: velocidadeVento.sensor,
+        data: data,
+        unidade: velocidadeVento.unidade,
+        tipo: "media",
+      };
+
+      let datasetVelocidadeVentoMax = {
+        label: velocidadeVento.sensor,
+        data: data2,
+        unidade: velocidadeVento.unidade,
+        tipo: "max",
+      };
+      datasets.push(datasetVelocidadeVentoMedia); // adiciona o dataset na lista
+      datasets.push(datasetVelocidadeVentoMax); // adiciona o dataset na lista
+    });
+
+    ultimaLeitura.DirecaoVento.forEach((direcaoVento) => {
+      // percorre as direções de vento
+      const leitura = retornaLeiturasPorSensor(
+        direcaoVento.sensor,
+        direcaoVento.unidade
+      );
+      let data = [];
+      leitura.forEach((direcaoVento) => {
+        data.push(direcaoVento.valor / 10);
+      });
+      let datasetDirecaoVento = {
+        label: direcaoVento.sensor,
+        data: data,
+        unidade: direcaoVento.unidade,
+      };
+      datasets.push(datasetDirecaoVento);
+    });
+
+    ultimaLeitura.Precipitacao.forEach((precipitacao) => {
+      // percorre as precipitações
+      const leitura = retornaLeiturasPorSensor(
+        precipitacao.sensor,
+        precipitacao.unidade
+      );
+      let data = [];
+      leitura.forEach((precipitacao) => {
+        data.push(precipitacao.valor / 10);
+      });
+      let datasetPrecipitacao = {
+        label: precipitacao.sensor,
+        data: data,
+        unidade: precipitacao.unidade,
+      };
+      datasets.push(datasetPrecipitacao); // adiciona o dataset na lista
+    });
+
+    recentes.forEach((leitura) => {
+      // percorre os recentes
+      labels.push(new Date(leitura.createdAt).toLocaleTimeString()); // adiciona o horario da leitura ao array de labels
+    });
+  }
+
+  preencherDatasets(); // preenche os datasets
+  console.log(datasets);
 
   const ctx = document.getElementById("myChart").getContext("2d");
 
@@ -108,10 +244,4 @@ window.onload = function () {
   // </block:config>
 
   const myChart = new Chart(ctx, config);
-
-  getRecentes().then(function (response) {
-    console.log(myChart.data.labels);
-    myChart.update();
-  });
-  console.log("ADSD");
 };

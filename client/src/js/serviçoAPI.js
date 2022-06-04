@@ -1,10 +1,8 @@
-const urlBackend = "http://127.0.0.1:3000/"; // url do backend
+const urlBackend = "http://192.168.237.80:3000/"; // url do backend
 
 export function getRecentes() {
   // Função que retorna os recentes
-  let result = axios.get(urlBackend + "leitura/recentes"); // chama o serviço
-  result = result.then((response) => response.data); // pega o resultado da promise
-  return result; // retorna o resultado
+  return axios.get(urlBackend + "leitura/recentes");
 }
 
 export function getFiltrado(datamin, datamax) {
