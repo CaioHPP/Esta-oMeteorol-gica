@@ -8,10 +8,36 @@ window.onload = async function () {
   });
 
   let ultimaLeitura = recentes[0]; // pega a ultima leitura
+  const atualizaUltimaLeitura = () => {
+    document.getElementById("temperaturaAtual").innerHTML = `${
+      ultimaLeitura.Temperatura[0].valor / 10
+    } ºC`;
+    document.getElementById(
+      "umidadeRelativaAtual"
+    ).innerHTML = `${ultimaLeitura.UmidadeRelativa[0].valor} %`;
+    document.getElementById(
+      "horarioAtual"
+    ).innerHTML = `Atualizado às ${new Date(
+      ultimaLeitura.createdAt
+    ).toLocaleTimeString()}`;
+    document.getElementById("velocidadeVentoAtual").innerHTML = `${
+      ultimaLeitura.VelocidadeVento[0].media * 0.36
+    } km/h`;
+    const anguloVento = ultimaLeitura.DirecaoVento[0].valor;
+    document.getElementById(
+      "direcaoVentoAtual"
+    ).style.transform = `rotate(${anguloVento}deg)`;
+    document.getElementById("precipitacaoAtual").innerHTML = `${
+      ultimaLeitura.Precipitacao[0].valor / 10
+    } mm`;
+    document.getElementById("pressaoAtual").innerHTML = `${
+      ultimaLeitura.Pressao[0].valor / 10
+    } hPa`;
+  };
+
+  atualizaUltimaLeitura(); // atualiza a ultima leitura
+
   recentes.reverse(); // inverte a ordem
-
-  console.log(recentes);
-
   function retornaLeiturasPorSensor(nomeSensor, unidade) {
     const lista = recentes.map((leitura) => {
       leitura = Object.values(leitura).flat();
@@ -110,20 +136,20 @@ window.onload = async function () {
       let data = [];
       let data2 = [];
       leitura.forEach((velocidadeVento) => {
-        data.push(velocidadeVento.media / 10); // pega a media da velocidade de vento
-        data2.push(velocidadeVento.maximo / 10); // pega o maximo da velocidade de vento
+        data.push(velocidadeVento.media * 0.36); // pega a media da velocidade de vento
+        data2.push(velocidadeVento.maximo * 0.36); // pega o maximo da velocidade de vento
       });
       let datasetVelocidadeVentoMedia = {
         label: velocidadeVento.sensor,
         data: data,
-        unidade: velocidadeVento.unidade,
+        unidade: "km/h",
         tipo: "mediaVelocidadeVento",
       };
 
       let datasetVelocidadeVentoMax = {
         label: velocidadeVento.sensor,
         data: data2,
-        unidade: velocidadeVento.unidade,
+        unidade: "km/h",
         tipo: "maxVelocidadeVento",
       };
       datasets.push(datasetVelocidadeVentoMedia); // adiciona o dataset na lista
@@ -138,7 +164,23 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((direcaoVento) => {
-        data.push(direcaoVento.valor / 10);
+        if (direcaoVento.valor <= 22.5 || direcaoVento.valor >= 337.5) {
+          data.push("N");
+        } else if (direcaoVento.valor <= 67.5) {
+          data.push("NE");
+        } else if (direcaoVento.valor <= 112.5) {
+          data.push("L");
+        } else if (direcaoVento.valor <= 157.5) {
+          data.push("SE");
+        } else if (direcaoVento.valor <= 202.5) {
+          data.push("S");
+        } else if (direcaoVento.valor <= 247.5) {
+          data.push("SO");
+        } else if (direcaoVento.valor <= 292.5) {
+          data.push("O");
+        } else if (direcaoVento.valor <= 337.5) {
+          data.push("NO");
+        }
       });
       let datasetDirecaoVento = {
         label: direcaoVento.sensor,
@@ -204,7 +246,7 @@ window.onload = async function () {
       dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
       dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 7;
+      dataset.pointRadius = 6;
       dataset.pointHoverRadius = 10;
       dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
       dataset.pointBorderColor = "rgba(255, 99, 132, 0.5)";
@@ -223,8 +265,8 @@ window.onload = async function () {
       dataset.borderColor = "rgba(54, 162, 235, 1)";
       dataset.backgroundColor = "rgba(54, 162, 235, 0.5)";
       dataset.borderWidth = 4;
-      dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 7;
+
+      dataset.pointRadius = 3;
       dataset.pointHoverRadius = 10;
       dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
       dataset.pointBorderColor = "rgba(54, 162, 235, 0.5)";
@@ -241,14 +283,13 @@ window.onload = async function () {
       (dataset) => dataset.tipo === "UmidadeRelativa"
     );
     datasetsUmidadeRelativa.forEach((dataset) => {
-      dataset.borderColor = "rgba(255, 206, 86, 1)";
-      dataset.backgroundColor = "rgba(255, 206, 86, 0.5)";
+      dataset.borderColor = "rgba(54, 162, 235, 1)";
+      dataset.backgroundColor = "rgba(54, 162, 235, 0.5)";
       dataset.borderWidth = 4;
-      dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 7;
+      dataset.pointRadius = 3;
       dataset.pointHoverRadius = 10;
-      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
-      dataset.pointBorderColor = "rgba(255, 206, 86, 0.5)";
+      dataset.pointHoverBackgroundColor = "rgba(54, 162, 235, 1)";
+      dataset.pointBorderColor = "rgba(54, 162, 235, 0.5)";
       dataset.yAxisID = "y1";
       dataset.cubicInterpolationMode = "monotone";
       dataset.tension = 0.4;
@@ -261,15 +302,15 @@ window.onload = async function () {
       (dataset) => dataset.tipo === "UmidadeSolo"
     );
     datasetsUmidadeSolo.forEach((dataset) => {
-      dataset.borderColor = "rgba(75, 192, 192, 1)";
-      dataset.backgroundColor = "rgba(75, 192, 192, 0.5)";
+      dataset.borderColor = "rgb(160, 66, 11)";
+      dataset.backgroundColor = "rgba(160, 66, 11, 0.5)";
       dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
       dataset.pointRadius = 7;
       dataset.pointHoverRadius = 10;
-      dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
-      dataset.pointBorderColor = "rgba(75, 192, 192, 0.5)";
-      dataset.yAxisID = "y1";
+      dataset.pointHoverBackgroundColor = "rgb(160, 66, 11)";
+      dataset.pointBorderColor = "rgba(160, 66, 11, 0.5)";
+      dataset.yAxisID = "y2";
       dataset.cubicInterpolationMode = "monotone";
       dataset.tension = 0.4;
     });
@@ -281,14 +322,13 @@ window.onload = async function () {
       (dataset) => dataset.tipo === "mediaVelocidadeVento"
     );
     datasetsVelocidadeVentoMedia.forEach((dataset) => {
-      dataset.borderColor = "rgba(255, 159, 64, 1)";
-      dataset.backgroundColor = "rgba(255, 159, 64, 0.5)";
+      dataset.borderColor = "black";
+      dataset.backgroundColor = "rgba(0, 0, 0, 0.5)";
       dataset.borderWidth = 4;
-      dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 7;
+      dataset.pointRadius = 3;
       dataset.pointHoverRadius = 10;
       dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
-      dataset.pointBorderColor = "rgba(255, 159, 64, 0.5)";
+      dataset.pointBorderColor = "rgba(0, , 0, 0.5)";
       dataset.yAxisID = "y";
       dataset.cubicInterpolationMode = "monotone";
       dataset.tension = 0.4;
@@ -302,19 +342,17 @@ window.onload = async function () {
       (dataset) => dataset.tipo === "maxVelocidadeVento"
     );
     datasetsVelocidadeVentoMax.forEach((dataset) => {
-      dataset.borderColor = "rgba(255, 99, 132, 1)";
-      dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
+      dataset.borderColor = "black";
+      dataset.backgroundColor = "rgba(0, 0, 0, 0.0)";
       dataset.borderWidth = 4;
-
-      dataset.pointStyle = "rectRot";
-      dataset.pointRadius = 7;
+      dataset.pointRadius = 3;
       dataset.pointHoverRadius = 10;
       dataset.pointHoverBackgroundColor = "rgba(0, 0, 0, 1)";
-      dataset.pointBorderColor = "rgba(255, 99, 132, 0.5)";
-
+      dataset.pointBorderColor = "rgba(0, 0, 0)";
       dataset.yAxisID = "y";
       dataset.cubicInterpolationMode = "monotone";
       dataset.tension = 0.4;
+      dataset.borderDash = [2, 2];
     });
     return datasetsVelocidadeVentoMax;
   }
@@ -334,6 +372,7 @@ window.onload = async function () {
         "rgba(201, 203, 207, 0.5)",
         "rgba(61, 226, 255, 0.5)",
       ];
+      dataset.borderAlign = "inner";
     });
     return datasetsDirecaoVento;
   }
@@ -343,9 +382,9 @@ window.onload = async function () {
       (dataset) => dataset.tipo === "Precipitacao"
     );
     datasetsPrecipitacao.forEach((dataset) => {
-      dataset.borderColor = "rgba(255, 99, 132, 1)";
-      dataset.backgroundColor = "rgba(255, 99, 132, 0.5)";
-      dataset.borderWidth = 0;
+      dataset.borderColor = "rgba(75, 192, 192, 0.3)";
+      dataset.backgroundColor = "rgba(75, 192, 192, 0.3)";
+      dataset.borderWidth = 4;
       dataset.pointStyle = "rectRot";
       dataset.pointRadius = 7;
       dataset.pointHoverRadius = 10;
@@ -366,12 +405,13 @@ window.onload = async function () {
     if (tipoGrafico === "Temperatura/UmidadeRelativa") {
       data.datasets.push(datasetsTemperatura());
       data.datasets.push(datasetsUmidadeRelativa());
+
       config.type = "line";
       config.options = {
         responsive: true,
         interaction: {
           mode: "index",
-          intersect: true,
+          intersect: false,
         },
         stacked: false,
         plugins: {
@@ -384,6 +424,12 @@ window.onload = async function () {
               usePointStyle: true,
             },
           },
+          tooltip: {
+            callbacks: {
+              label: (item) =>
+                `${item.dataset.label}: ${item.formattedValue} ${item.dataset.unidade}`,
+            },
+          },
         },
         scales: {
           y: {
@@ -393,6 +439,13 @@ window.onload = async function () {
             title: {
               display: true,
               text: "Temperatura (°C)",
+              color: "rgba(255, 99, 132, 1)",
+            },
+            ticks: {
+              color: "rgba(255, 99, 132, 1)",
+              callback: function (value, index, values) {
+                return value + " °C";
+              },
             },
           },
           y1: {
@@ -402,9 +455,21 @@ window.onload = async function () {
             title: {
               display: true,
               text: "Umidade Relativa (%)",
+              color: "rgba(54, 162, 235, 1)",
+            },
+            ticks: {
+              color: "rgba(54, 162, 235, 1)",
+              callback: function (value, index, values) {
+                return value + " %";
+              },
             },
             grid: {
               drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+          },
+          x: {
+            grid: {
+              display: false,
             },
           },
         },
@@ -418,7 +483,7 @@ window.onload = async function () {
         responsive: true,
         interaction: {
           mode: "index",
-          intersect: true,
+          intersect: false,
         },
         stacked: true,
         plugins: {
@@ -431,6 +496,12 @@ window.onload = async function () {
               usePointStyle: true,
             },
           },
+          tooltip: {
+            callbacks: {
+              label: (item) =>
+                `${item.dataset.label}: ${item.formattedValue} ${item.dataset.unidade}`,
+            },
+          },
         },
         scales: {
           y: {
@@ -440,6 +511,13 @@ window.onload = async function () {
             title: {
               display: true,
               text: "Precipitação (mm)",
+              color: "rgba(75, 192, 192, 1)",
+            },
+            ticks: {
+              color: "rgba(75, 192, 192, 1)",
+              callback: function (value, index, values) {
+                return value + " mm";
+              },
             },
           },
           y1: {
@@ -449,28 +527,106 @@ window.onload = async function () {
             title: {
               display: true,
               text: "Pressão (hPa)",
+              color: "rgba(54, 162, 235, 1)",
             },
+            ticks: {
+              color: "rgba(54, 162, 235, 1)",
+              callback: function (value, index, values) {
+                return value + " hPa";
+              },
+            },
+
             grid: {
               drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
+          },
+          x: {
+            grid: {
+              display: false,
             },
           },
         },
       };
     }
     if (tipoGrafico === "DirecaoVento") {
-      data.labels = ["N", "NE", "L", "SE", "S", "SO", "O", "NO"];
-      data.datasets.push(datasetsDirecaoVento());
+      let datasets = datasetsDirecaoVento(); // datasetsDirecaoVento
+
+      data.labels = ["N", "NE", "L", "SE", "S", "SO", "O", "NO"]; // labels
+      let norte = 0;
+      let nordeste = 0;
+      let leste = 0;
+      let sudeste = 0;
+      let sul = 0;
+      let sudoeste = 0;
+      let oeste = 0;
+      let noroeste = 0;
+
+      datasets.forEach((dataset) => {
+        // datasetsDirecaoVento
+        dataset.data.forEach((data) => {
+          if (data === "N") {
+            norte++;
+          }
+          if (data === "NE") {
+            nordeste++;
+          }
+          if (data === "L") {
+            leste++;
+          }
+          if (data === "SE") {
+            sudeste++;
+          }
+          if (data === "S") {
+            sul++;
+          }
+          if (data === "SO") {
+            sudoeste++;
+          }
+          if (data === "O") {
+            oeste++;
+          }
+          if (data === "NO") {
+            noroeste++;
+          }
+        });
+        dataset.data = [
+          (norte * 100) / dataset.data.length,
+          (nordeste * 100) / dataset.data.length,
+          (leste * 100) / dataset.data.length,
+          (sudeste * 100) / dataset.data.length,
+          (sul * 100) / dataset.data.length,
+          (sudoeste * 100) / dataset.data.length,
+          (oeste * 100) / dataset.data.length,
+          (noroeste * 100) / dataset.data.length,
+        ];
+      });
+
+      data.datasets = datasets;
       config.type = "polarArea";
       config.options = {
         responsive: true,
         scales: {
           r: {
+            startAngle: -22.5,
             pointLabels: {
               display: true,
-              centerPointLabels: false,
+              centerPointLabels: true,
               font: {
                 size: 18,
               },
+              color: [
+                "rgba(255, 99, 132, 1)",
+                "rgba(255, 159, 64, 1)",
+                "rgba(255, 205, 86, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(54, 162, 235, 1)",
+                "rgba(153, 102, 255, 1)",
+                "rgba(201, 203, 207, 1)",
+                "rgba(61, 226, 255, 1)",
+              ],
+            },
+            ticks: {
+              display: false,
             },
           },
         },
@@ -480,7 +636,158 @@ window.onload = async function () {
           },
           title: {
             display: true,
-            text: "Chart.js Polar Area Chart With Centered Point Labels",
+            text: "Direção Do Vento",
+          },
+          tooltip: {
+            callbacks: {
+              label: (item) =>
+                `${item.dataset.label}: ${item.formattedValue} %`,
+            },
+          },
+        },
+      };
+    }
+    if (tipoGrafico === "VelocidadesVento") {
+      data.datasets.push(datasetsVelocidadeVentoMax());
+      data.datasets.push(datasetsVelocidadeVentoMedia());
+
+      config.type = "line";
+      config.options = {
+        responsive: true,
+        interaction: {
+          mode: "index",
+          intersect: false,
+        },
+        stacked: false,
+        plugins: {
+          title: {
+            display: true,
+            text: "Velocidade Do Vento",
+          },
+          legend: {
+            labels: {
+              boxHeight: 1,
+              boxWidth: 40,
+              usePointStyle: false,
+            },
+          },
+          tooltip: {
+            callbacks: {
+              label: (item) =>
+                `${item.dataset.label}: ${item.formattedValue} ${item.dataset.unidade}`,
+            },
+          },
+        },
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+            title: {
+              display: true,
+              text: "Velocidade (km/h)",
+            },
+            ticks: {
+              color: "black",
+              callback: function (value, index, values) {
+                return value + " km/h";
+              },
+            },
+          },
+          x: {
+            grid: {
+              display: false,
+            },
+          },
+        },
+      };
+    }
+
+    if (tipoGrafico === "Precipitacao/UmidadeRelativa/UmidadeSolo") {
+      data.datasets.push(datasetsPrecipitacao());
+      data.datasets.push(datasetsUmidadeRelativa());
+      data.datasets.push(datasetsUmidadeSolo());
+      config.type = "line";
+      config.options = {
+        responsive: true,
+        interaction: {
+          mode: "index",
+          intersect: false,
+        },
+        stacked: true,
+        plugins: {
+          title: {
+            display: true,
+            text: "Precipitação x Umidade Relativa x Umidade do Solo",
+          },
+          tooltip: {
+            callbacks: {
+              label: (item) =>
+                `${item.dataset.label}: ${item.formattedValue} ${item.dataset.unidade}`,
+            },
+          },
+        },
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+            title: {
+              display: true,
+              text: "Precipitação (mm)",
+              color: "rgba(75, 192, 192, 1)",
+            },
+            ticks: {
+              color: "rgba(75, 192, 192, 1)",
+              callback: function (value, index, values) {
+                return value + " mm";
+              },
+            },
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "Umidade Relativa (%)",
+              color: "rgba(54, 162, 235, 1)",
+            },
+            ticks: {
+              color: "rgba(54, 162, 235, 1)",
+              callback: function (value, index, values) {
+                return value + " %";
+              },
+              padding: 5,
+            },
+            grid: {
+              display: false,
+            },
+          },
+          y2: {
+            grid: {
+              display: false,
+            },
+            type: "linear",
+            display: true,
+            position: "right",
+            title: {
+              display: true,
+              text: "Umidade do Solo (%)",
+              color: "rgb(160, 66, 11)",
+            },
+            ticks: {
+              color: "rgb(160, 66, 11)",
+              callback: function (value, index, values) {
+                return value + " %";
+              },
+            },
+          },
+
+          x: {
+            grid: {
+              display: false,
+            },
           },
         },
       };
@@ -498,12 +805,4 @@ window.onload = async function () {
     const tipoGrafico = grafico.getAttribute("tipo-grafico");
     const aplicaGrafico = new Chart(id, geraConfiguracao(tipoGrafico, labels));
   });
-
-  /*   const ctx = document
-    .getElementById("Temperatura/UmidadeRelativa")
-    .getContext("2d");
-   const myChart = new Chart(
-    ctx,
-    geraConfiguracao("Temperatura/UmidadeRelativa", labels)
-  );*/
 };

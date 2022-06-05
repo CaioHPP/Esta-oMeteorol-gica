@@ -31,26 +31,26 @@
             <div class="local">
                 <div class="info">
                     <h1 class="cidade">Campo Mourão</h1>
-                    <h1 class="valor">24 ºC</h1>
-                    <h2 class="atualizacao">Atualizado às 17:30</h2>
+                    <h1 class="valor" id="temperaturaAtual"></h1>
+                    <h2 class="atualizacao" id="horarioAtual"></h2>
                 </div>
                 <div class="info2">
                     <div class="vento">
-                        <img src="../icons/vento.png" alt="">
-                        <h1 class="valor">24 km/h</h1>
+                        <img src="../icons/vento.png" alt="" id="direcaoVentoAtual">
+                        <h1 class="valor" id="velocidadeVentoAtual"></h1>
                     </div>
                     <div class="chuva">
                         <img src="../icons/chuva.png" alt="">
-                        <h1 class="valor">3 mm</h1>
+                        <h1 class="valor" id="precipitacaoAtual"></h1>
                     </div>
                     <div class="ur">
                         <img src="../icons/umidade.png" alt="">
-                        <h1 class="valor">32 %</h1>
+                        <h1 class="valor" id="umidadeRelativaAtual"></h1>
                     </div>
 
                     <div class="pressao">
                         <img src="../icons/pressao.png" alt="">
-                        <h1 class="valor">1013,6 hPa</h1>
+                        <h1 class="valor" id="pressaoAtual"></h1>
                     </div>
                 </div>
             </div>
@@ -69,6 +69,24 @@
         </div>
     </section>
 
+    <section>
+        <div class="grafico" style=" width: 50%;">
+            <canvas id=" grafico3" width="500" height="500" tipo-grafico="DirecaoVento"></canvas>
+        </div>
+    </section>
+
+    <section>
+        <div class="grafico">
+            <canvas id="grafico4" width="1000" height="500" tipo-grafico="VelocidadesVento"></canvas>
+        </div>
+    </section>
+
+    <section>
+        <div class="grafico">
+            <canvas id="grafico5" width="1000" height="500"
+                tipo-grafico="Precipitacao/UmidadeRelativa/UmidadeSolo"></canvas>
+        </div>
+    </section>
 
 
     <script type="module" src=" ../js/script.js"></script>
