@@ -6,44 +6,67 @@ window.onload = async function () {
   const params = new URLSearchParams(window.location.search);
   let dados = []; // array que vai receber os dados
   if (params.has("datamin") && params.has("datamax")) {
-    let dataMinFormatada = moment(
-      params.get("datamin").substring(0, 13)
-    ).format("x");
-    let dataMaxFormatada = moment(
-      params.get("datamax").substring(0, 13)
-    ).format("x");
-    dados = await getFiltrado(params.get("datamin"), params.get("datamax"));
+    if (
+      moment(params.get("datamin")).isValid() &&
+      moment(params.get("datamax")).isValid()
+    ) {
+      let dataMinFormatada = moment(
+        params.get("datamin").substring(0, 13)
+      ).format();
+      let dataMaxFormatada = moment(
+        params.get("datamax").substring(0, 13)
+      ).format();
+      console.log(dataMinFormatada, dataMaxFormatada);
+      dados = await getFiltrado(dataMinFormatada, dataMaxFormatada);
+      if (dados.length == 0) {
+        alert("Não há dados para o período selecionado");
+        window.location = "./index.html"; // redireciona para a página inicial
+      }
+    } else {
+      alert("Data inválida");
+      window.location = "./index.html"; // redireciona para a página inicial
+    }
   } else if (params.has("data")) {
-    dados = await getDia(moment(params.get("data")).format("x"));
-    dados = dados.filter((leitura) => {
-      let data = new Date(leitura.createdAt).toISOString();
-      return (
-        data.endsWith("T00:00:00.000Z") ||
-        data.endsWith("T01:00:00.000Z") ||
-        data.endsWith("T02:00:00.000Z") ||
-        data.endsWith("T03:00:00.000Z") ||
-        data.endsWith("T04:00:00.000Z") ||
-        data.endsWith("T05:00:00.000Z") ||
-        data.endsWith("T06:00:00.000Z") ||
-        data.endsWith("T07:00:00.000Z") ||
-        data.endsWith("T08:00:00.000Z") ||
-        data.endsWith("T09:00:00.000Z") ||
-        data.endsWith("T10:00:00.000Z") ||
-        data.endsWith("T11:00:00.000Z") ||
-        data.endsWith("T12:00:00.000Z") ||
-        data.endsWith("T13:00:00.000Z") ||
-        data.endsWith("T14:00:00.000Z") ||
-        data.endsWith("T15:00:00.000Z") ||
-        data.endsWith("T16:00:00.000Z") ||
-        data.endsWith("T17:00:00.000Z") ||
-        data.endsWith("T18:00:00.000Z") ||
-        data.endsWith("T19:00:00.000Z") ||
-        data.endsWith("T20:00:00.000Z") ||
-        data.endsWith("T21:00:00.000Z") ||
-        data.endsWith("T22:00:00.000Z") ||
-        data.endsWith("T23:00:00.000Z")
-      );
-    });
+    if (moment(params.get("data")).isValid()) {
+      let dataFormatada = moment(params.get("data")).format();
+      dados = await getDia(dataFormatada);
+      dados = dados.filter((leitura) => {
+        let data = new Date(leitura.createdAt).toISOString();
+        return (
+          data.endsWith("T00:00:00.000Z") ||
+          data.endsWith("T01:00:00.000Z") ||
+          data.endsWith("T02:00:00.000Z") ||
+          data.endsWith("T03:00:00.000Z") ||
+          data.endsWith("T04:00:00.000Z") ||
+          data.endsWith("T05:00:00.000Z") ||
+          data.endsWith("T06:00:00.000Z") ||
+          data.endsWith("T07:00:00.000Z") ||
+          data.endsWith("T08:00:00.000Z") ||
+          data.endsWith("T09:00:00.000Z") ||
+          data.endsWith("T10:00:00.000Z") ||
+          data.endsWith("T11:00:00.000Z") ||
+          data.endsWith("T12:00:00.000Z") ||
+          data.endsWith("T13:00:00.000Z") ||
+          data.endsWith("T14:00:00.000Z") ||
+          data.endsWith("T15:00:00.000Z") ||
+          data.endsWith("T16:00:00.000Z") ||
+          data.endsWith("T17:00:00.000Z") ||
+          data.endsWith("T18:00:00.000Z") ||
+          data.endsWith("T19:00:00.000Z") ||
+          data.endsWith("T20:00:00.000Z") ||
+          data.endsWith("T21:00:00.000Z") ||
+          data.endsWith("T22:00:00.000Z") ||
+          data.endsWith("T23:00:00.000Z")
+        );
+      });
+      if (dados.length == 0) {
+        alert("Não há dados para o dia selecionado");
+        window.location = "./index.html"; // redireciona para a página inicial
+      }
+    } else {
+      alert("Data inválida");
+      window.location = "./index.html"; // redireciona para a página inicial
+    }
   } else {
     dados = await getRecentes().then(({ data }) => {
       return data;
@@ -59,6 +82,7 @@ window.onload = async function () {
 
   if (params.has("datamin") && params.has("datamax")) {
     datamax.value = params.get("datamax");
+    datamax.disabled = false;
     datamin.value = params.get("datamin");
   }
   datamin.onchange = function (e) {
@@ -330,7 +354,8 @@ window.onload = async function () {
 
     dados.forEach((leitura) => {
       // percorre os dados
-      labels.push(new Date(leitura.createdAt).getTime()); // adiciona o horario da leitura ao array de labels
+
+      labels.push(moment(leitura.createdAt)); // adiciona o horario da leitura ao array de labels
     });
   }
 
@@ -565,17 +590,19 @@ window.onload = async function () {
             grid: {
               drawOnChartArea: false, // only want the grid lines for one axis to show up
             },
+            max: 100,
+            min: 0,
           },
           x: {
             type: "time",
+            display: true,
+            position: "bottom",
             time: {
-              //display format as DD/MM/YYYY HH:mm
+              unit: "minute",
+              tooltipFormat: "DD MMM HH:mm",
               displayFormats: {
                 minute: "DD/MM HH:mm",
               },
-              unit: "minute",
-
-              tooltipFormat: "DD MMM HH:mm",
             },
 
             grid: {
@@ -656,14 +683,14 @@ window.onload = async function () {
           },
           x: {
             type: "time",
+            display: true,
+            position: "bottom",
             time: {
-              //display format as DD/MM/YYYY HH:mm
+              unit: "minute",
+              tooltipFormat: "DD MMM HH:mm",
               displayFormats: {
                 minute: "DD/MM HH:mm",
               },
-              unit: "minute",
-
-              tooltipFormat: "DD MMM HH:mm",
             },
 
             grid: {
@@ -828,14 +855,14 @@ window.onload = async function () {
           },
           x: {
             type: "time",
+            display: true,
+            position: "bottom",
             time: {
-              //display format as DD/MM/YYYY HH:mm
+              unit: "minute",
+              tooltipFormat: "DD MMM HH:mm",
               displayFormats: {
                 minute: "DD/MM HH:mm",
               },
-              unit: "minute",
-
-              tooltipFormat: "DD MMM HH:mm",
             },
 
             grid: {
@@ -909,6 +936,8 @@ window.onload = async function () {
             grid: {
               display: false,
             },
+            max: 100,
+            min: 0,
           },
           y2: {
             grid: {
@@ -928,18 +957,20 @@ window.onload = async function () {
                 return value + " %";
               },
             },
+            max: 100,
+            min: 0,
           },
 
           x: {
             type: "time",
+            display: true,
+            position: "bottom",
             time: {
-              //display format as DD/MM/YYYY HH:mm
+              unit: "minute",
+              tooltipFormat: "DD MMM HH:mm",
               displayFormats: {
                 minute: "DD/MM HH:mm",
               },
-              unit: "minute",
-
-              tooltipFormat: "DD MMM HH:mm",
             },
 
             grid: {
@@ -987,7 +1018,9 @@ window.onload = async function () {
     ).innerHTML = `${ultimaLeitura.UmidadeRelativa[0].valor} %`;
     document.getElementById("horarioAtual").innerHTML = `Atualizado às ${moment(
       ultimaLeitura.createdAt
-    ).format("HH:mm:ss DD/MM/YYYY")}`;
+    )
+      .utc()
+      .format("HH:mm:ss DD/MM/YYYY")}`;
     document.getElementById(
       "velocidadeVentoAtual"
     ).innerHTML = `${mediaVelocidadeVento.toFixed(1)} km/h`;
