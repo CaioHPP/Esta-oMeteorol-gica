@@ -52,47 +52,9 @@
         </div>
 
     </header>
-
-    <section>
-
-        <div class="resumo" id="resumo">
-            <div class="local">
-                <div class="info">
-                    <h1 class="cidade">Campo Mourão</h1>
-                    <h1 class="valor" id="temperaturaAtual"></h1>
-                    <h2 class="atualizacao" id="horarioAtual"></h2>
-                </div>
-                <div class="info2">
-                    <div class="vento">
-                        <img src="../icons/vento.png" alt="" id="direcaoVentoAtual">
-                        <h1 class="valor" id="velocidadeVentoAtual"></h1>
-                    </div>
-                    <div class="chuva">
-                        <img src="../icons/chuva.png" alt="">
-                        <h1 class="valor" id="precipitacaoAtual"></h1>
-                    </div>
-                    <div class="ur">
-                        <img src="../icons/umidade.png" alt="">
-                        <h1 class="valor" id="umidadeRelativaAtual"></h1>
-                    </div>
-
-                    <div class="pressao">
-                        <img src="../icons/pressao.png" alt="">
-                        <h1 class="valor" id="pressaoAtual"></h1>
-                    </div>
-
-                    <div class="altitude">
-                        <img src="../icons/altitude.png" alt="">
-                        <h1 class="valor" id="altitudeAtual"></h1>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section>
         <div class="grafico">
-            <canvas id="grafico1" width="1100" height="500" tipo-grafico="Temperatura/UmidadeRelativa"></canvas>
+            <canvas id="grafico1" width="1000" height="500" tipo-grafico="Temperatura/UmidadeRelativa"></canvas>
         </div>
     </section>
 
@@ -121,12 +83,12 @@
         </div>
     </section>
 
-
     <script type="module" src=" ../js/script.js"></script>
     <script src="../modules/axios-0.27.2/dist/axios.min.js"></script>
     <script src="../../node_modules/moment/moment.js"></script>
     <script src="../modules/chart.js-3.8.0/dist/chart.js"></script>
     <script src="../../node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js"></script>
+
 
 </body>
 

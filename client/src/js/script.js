@@ -3,17 +3,108 @@ import { getFiltrado } from "./serviçoAPI.js"; // Importa o serviço
 import { getDia } from "./serviçoAPI.js"; // Importa o serviço
 
 window.onload = async function () {
-  const recentes = await getRecentes().then(({ data }) => {
-    return data;
-  });
+  const params = new URLSearchParams(window.location.search);
+  let dados = []; // array que vai receber os dados
+  if (params.has("datamin") && params.has("datamax")) {
+    let dataMinFormatada = moment(
+      params.get("datamin").substring(0, 13)
+    ).format("x");
+    let dataMaxFormatada = moment(
+      params.get("datamax").substring(0, 13)
+    ).format("x");
+    dados = await getFiltrado(params.get("datamin"), params.get("datamax"));
+  } else if (params.has("data")) {
+    dados = await getDia(moment(params.get("data")).format("x"));
+    dados = dados.filter((leitura) => {
+      let data = new Date(leitura.createdAt).toISOString();
+      return (
+        data.endsWith("T00:00:00.000Z") ||
+        data.endsWith("T01:00:00.000Z") ||
+        data.endsWith("T02:00:00.000Z") ||
+        data.endsWith("T03:00:00.000Z") ||
+        data.endsWith("T04:00:00.000Z") ||
+        data.endsWith("T05:00:00.000Z") ||
+        data.endsWith("T06:00:00.000Z") ||
+        data.endsWith("T07:00:00.000Z") ||
+        data.endsWith("T08:00:00.000Z") ||
+        data.endsWith("T09:00:00.000Z") ||
+        data.endsWith("T10:00:00.000Z") ||
+        data.endsWith("T11:00:00.000Z") ||
+        data.endsWith("T12:00:00.000Z") ||
+        data.endsWith("T13:00:00.000Z") ||
+        data.endsWith("T14:00:00.000Z") ||
+        data.endsWith("T15:00:00.000Z") ||
+        data.endsWith("T16:00:00.000Z") ||
+        data.endsWith("T17:00:00.000Z") ||
+        data.endsWith("T18:00:00.000Z") ||
+        data.endsWith("T19:00:00.000Z") ||
+        data.endsWith("T20:00:00.000Z") ||
+        data.endsWith("T21:00:00.000Z") ||
+        data.endsWith("T22:00:00.000Z") ||
+        data.endsWith("T23:00:00.000Z")
+      );
+    });
+  } else {
+    dados = await getRecentes().then(({ data }) => {
+      return data;
+    });
+    dados.reverse();
+  }
+
+  const datamin = document.getElementById("dataMin");
+  let agora = new Date(Date.now());
+  agora = agora.toISOString();
+  datamin.max = agora.substring(0, ((agora.indexOf("T") | 0) + 6) | 0);
+  const datamax = document.getElementById("dataMax");
+
+  if (params.has("datamin") && params.has("datamax")) {
+    datamax.value = params.get("datamax");
+    datamin.value = params.get("datamin");
+  }
+  datamin.onchange = function (e) {
+    datamax.disabled = false;
+    datamax.min = datamin.value;
+    let data = new Date(datamin.value);
+    data.setDate(data.getDate() + 7);
+    data = data.toISOString();
+    data = data.substring(0, ((data.indexOf("T") | 0) + 6) | 0);
+    datamax.max = data;
+  };
+
+  function carregarFiltrado(datamin, datamax) {
+    window.location =
+      "./filtrados.html?datamin=" + datamin + "&datamax=" + datamax;
+  }
+
+  const filtrar = document.getElementById("botaoFiltrar");
+  botaoFiltrar.onclick = async function (e) {
+    if (datamin.value != "" && datamax.value != "") {
+      carregarFiltrado(datamin.value, datamax.value);
+    }
+  };
+
+  if (dados.length > 72) {
+    dados = dados.filter((leitura) => {
+      let data = new Date(leitura.createdAt).toISOString();
+      return (
+        data.endsWith("T00:00:00.000Z") ||
+        data.endsWith("T03:00:00.000Z") ||
+        data.endsWith("T06:00:00.000Z") ||
+        data.endsWith("T09:00:00.000Z") ||
+        data.endsWith("T12:00:00.000Z") ||
+        data.endsWith("T15:00:00.000Z") ||
+        data.endsWith("T18:00:00.000Z") ||
+        data.endsWith("T21:00:00.000Z")
+      );
+    });
+  }
 
   let mediaDirecaoVento = "";
   let mediaVelocidadeVento = [];
-  let ultimaLeitura = recentes[0]; // pega a ultima leitura
+  let ultimaLeitura = dados[dados.length - 1]; // pega a ultima leitura
 
-  recentes.reverse(); // inverte a ordem
   function retornaLeiturasPorSensor(nomeSensor, unidade) {
-    const lista = recentes.map((leitura) => {
+    const lista = dados.map((leitura) => {
       leitura = Object.values(leitura).flat();
       return leitura.find(
         (valor) => valor.sensor === nomeSensor && valor.unidade === unidade
@@ -26,6 +117,7 @@ window.onload = async function () {
   const datasets = []; // cria um array de datasets
   function preencherDatasets() {
     // função que preenche o array de datasets
+    let mediaTemperatura = new Array(dados.length).fill(0);
     ultimaLeitura.Temperatura.forEach((temperatura) => {
       // percorre as temperaturas
       const leitura = retornaLeiturasPorSensor(
@@ -33,9 +125,11 @@ window.onload = async function () {
         temperatura.unidade
       ); // pega as leituras do sensor
       let data = []; // cria um array de dados
-      leitura.forEach((temperatura) => {
+
+      leitura.forEach((temperatura, indice) => {
         // percorre as leituras
         data.push(temperatura.valor / 10); // adiciona o valor da leitura ao array de dados
+        mediaTemperatura[indice] += temperatura.valor / 10;
       });
       let datasetTemperatura = {
         // cria o dataset da temperatura
@@ -44,8 +138,25 @@ window.onload = async function () {
         unidade: temperatura.unidade, // unidade
         tipo: "Temperatura", // tipo
       };
+      if (ultimaLeitura.Temperatura.length > 1) {
+        datasetTemperatura.hidden = true; // oculta o dataset
+      }
       datasets.push(datasetTemperatura); // adiciona o dataset na lista
     });
+    mediaTemperatura = mediaTemperatura.map((valor) => {
+      return valor / ultimaLeitura.Temperatura.length;
+    });
+
+    let datasetMediaTemperatura = {
+      label: "Média de Temperaturas",
+      data: mediaTemperatura,
+      unidade: "°C",
+      tipo: "Temperatura",
+    };
+
+    if (ultimaLeitura.Temperatura.length > 1) {
+      datasets.push(datasetMediaTemperatura);
+    }
 
     ultimaLeitura.Pressao.forEach((pressao) => {
       // percorre as pressões
@@ -114,7 +225,7 @@ window.onload = async function () {
         data.push(velocidadeVento.media * 0.36); // pega a media da velocidade de vento
         data2.push(velocidadeVento.maximo * 0.36); // pega o maximo da velocidade de vento
       });
-      console.log(mediaVelocidadeVento);
+
       mediaVelocidadeVento =
         mediaVelocidadeVento.reduce((a, b) => a + b, 0) /
         mediaVelocidadeVento.length;
@@ -217,9 +328,9 @@ window.onload = async function () {
       datasets.push(datasetAltitude); // adiciona o dataset na lista
     });
 
-    recentes.forEach((leitura) => {
-      // percorre os recentes
-      labels.push(new Date(leitura.createdAt).toLocaleTimeString()); // adiciona o horario da leitura ao array de labels
+    dados.forEach((leitura) => {
+      // percorre os dados
+      labels.push(new Date(leitura.createdAt).getTime()); // adiciona o horario da leitura ao array de labels
     });
   }
 
@@ -386,7 +497,7 @@ window.onload = async function () {
 
   function geraConfiguracao(tipoGrafico, labels) {
     const data = {
-      labels: labels,
+      labels,
       datasets: [],
     };
     const config = {};
@@ -456,13 +567,28 @@ window.onload = async function () {
             },
           },
           x: {
+            type: "time",
+            time: {
+              //display format as DD/MM/YYYY HH:mm
+              displayFormats: {
+                minute: "DD/MM HH:mm",
+              },
+              unit: "minute",
+
+              tooltipFormat: "DD MMM HH:mm",
+            },
+
             grid: {
               display: false,
+            },
+            ticks: {
+              source: "labels",
             },
           },
         },
       };
     }
+
     if (tipoGrafico === "Precipitacao/Pressao") {
       data.datasets.push(datasetsPrecipitacao());
       data.datasets.push(datasetsPressao());
@@ -529,8 +655,22 @@ window.onload = async function () {
             },
           },
           x: {
+            type: "time",
+            time: {
+              //display format as DD/MM/YYYY HH:mm
+              displayFormats: {
+                minute: "DD/MM HH:mm",
+              },
+              unit: "minute",
+
+              tooltipFormat: "DD MMM HH:mm",
+            },
+
             grid: {
               display: false,
+            },
+            ticks: {
+              source: "labels",
             },
           },
         },
@@ -592,6 +732,7 @@ window.onload = async function () {
       mediaDirecaoVento = Math.max(...data.datasets[0].data);
       mediaDirecaoVento = data.datasets[0].data.indexOf(mediaDirecaoVento);
       mediaDirecaoVento = data.labels[mediaDirecaoVento];
+
       config.type = "polarArea";
       config.options = {
         responsive: true,
@@ -637,6 +778,7 @@ window.onload = async function () {
         },
       };
     }
+
     if (tipoGrafico === "VelocidadesVento") {
       data.datasets.push(datasetsVelocidadeVentoMax());
       data.datasets.push(datasetsVelocidadeVentoMedia());
@@ -685,8 +827,22 @@ window.onload = async function () {
             },
           },
           x: {
+            type: "time",
+            time: {
+              //display format as DD/MM/YYYY HH:mm
+              displayFormats: {
+                minute: "DD/MM HH:mm",
+              },
+              unit: "minute",
+
+              tooltipFormat: "DD MMM HH:mm",
+            },
+
             grid: {
               display: false,
+            },
+            ticks: {
+              source: "labels",
             },
           },
         },
@@ -775,8 +931,22 @@ window.onload = async function () {
           },
 
           x: {
+            type: "time",
+            time: {
+              //display format as DD/MM/YYYY HH:mm
+              displayFormats: {
+                minute: "DD/MM HH:mm",
+              },
+              unit: "minute",
+
+              tooltipFormat: "DD MMM HH:mm",
+            },
+
             grid: {
               display: false,
+            },
+            ticks: {
+              source: "labels",
             },
           },
         },
@@ -788,26 +958,36 @@ window.onload = async function () {
     return config;
   }
 
-  const graficos = document.querySelectorAll("[tipo-grafico]");
-
-  graficos.forEach((grafico) => {
-    const id = grafico.getAttribute("id");
-    const tipoGrafico = grafico.getAttribute("tipo-grafico");
-    const aplicaGrafico = new Chart(id, geraConfiguracao(tipoGrafico, labels));
-  });
+  function atualizaGraficos() {
+    const graficos = document.querySelectorAll("[tipo-grafico]");
+    graficos.forEach((grafico) => {
+      const id = grafico.getAttribute("id");
+      const tipoGrafico = grafico.getAttribute("tipo-grafico");
+      const aplicaGrafico = new Chart(
+        id,
+        geraConfiguracao(tipoGrafico, labels)
+      );
+    });
+  }
 
   const atualizaUltimaLeitura = () => {
+    if (ultimaLeitura.Precipitacao[0].valor > 0) {
+      console.log(ultimaLeitura.Precipitacao[0].valor);
+      document.getElementById("resumo").style =
+        "background-image: linear-gradient(to right,#000000b3 0%,rgb(0 0 0 / 64%) 100%),url(../img/storm-clouds.jpg);";
+    } else {
+      document.getElementById("resumo").style =
+        "background-image: linear-gradient(to right,#000000b3 0%,rgb(0 0 0 / 64%) 100%),url(../img/bebe-sol-teletubbies.jpg);";
+    }
     document.getElementById("temperaturaAtual").innerHTML = `${
       ultimaLeitura.Temperatura[0].valor / 10
     } ºC`;
     document.getElementById(
       "umidadeRelativaAtual"
     ).innerHTML = `${ultimaLeitura.UmidadeRelativa[0].valor} %`;
-    document.getElementById(
-      "horarioAtual"
-    ).innerHTML = `Atualizado às ${new Date(
+    document.getElementById("horarioAtual").innerHTML = `Atualizado às ${moment(
       ultimaLeitura.createdAt
-    ).toLocaleTimeString()}`;
+    ).format("HH:mm:ss DD/MM/YYYY")}`;
     document.getElementById(
       "velocidadeVentoAtual"
     ).innerHTML = `${mediaVelocidadeVento.toFixed(1)} km/h`;
@@ -855,6 +1035,8 @@ window.onload = async function () {
       "altitudeAtual"
     ).innerHTML = `${ultimaLeitura.Altitude[0].valor} m`;
   };
-
-  atualizaUltimaLeitura(); // atualiza a ultima leitura
+  atualizaGraficos(); // atualiza os graficos
+  try {
+    atualizaUltimaLeitura(); // atualiza a ultima leitura
+  } catch (e) {}
 };
