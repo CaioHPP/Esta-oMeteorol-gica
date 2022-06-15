@@ -21,26 +21,54 @@
                     </a>
                 </div>
             </div>
-            <div class="filtrar" id="filtrar">
-                <div class="filtros">
-                    <h3>Data Aferida:</h3>
-                    <div>
-                        <div class="opcoes-filtro">
-                            <div class="data">
+            <div class="direita">
+                <div class="header">
 
-                                <div class="entrada-data">
+                    <a href="index.html">Home</a>
+                    <a class="active" href="filtrados.html">Filtragem</a>
+                </div>
+            </div>
 
-                                    <h4>De:</h4>
-                                    <input type="datetime-local" name="dataMin" id="dataMin" />
+        </div>
 
-                                    <h4>Até:</h4>
-                                    <input type="datetime-local" id="dataMax" name="dataMax" disabled>
-                                </div>
-                                <div class="tituloBotao">
-                                    <div class="botoes">
-                                        <div class="botaoFiltrar">
-                                            <a id="botaoFiltrar">Filtrar</a>
-                                        </div>
+    </header>
+
+    <div class="opcoes">
+        <div class="ordenar" id="ordenar">
+            <a onclick="abrirAba('ordenar')">
+                <div class="texto">
+                    <h2>Filtrar</h2>
+                    <span class="material-symbols-outlined" id="icone">
+                        <img src="../icons/direita.png">
+                    </span>
+                </div>
+            </a>
+
+            <div class="selecao closed" id="aba">
+                <h3>Filtrar por:</h3>
+                <div class="ordenacaoInline">
+                    <select name="" id="tipoFiltragem">
+                        <option value="periodo">Período</option>
+                        <option value="dia">Dia</option>
+                    </select>
+                    <div class="alternaTipos">
+
+                        <div class="entradaPeriodo" id="entradaPeriodo">
+                            <h4>De:</h4>
+                            <input type="datetime-local" name="dataMin" id="dataMin" />
+
+                            <h4>Até:</h4>
+                            <input type="datetime-local" id="dataMax" name="dataMax" disabled>
+                        </div>
+                        <div class="entradaDia closed" id="entradaDia">
+                            <h4>Dia:</h4>
+                            <input type="date" name="data" id="data" />
+                        </div>
+                        <div class="data">
+                            <div class="tituloBotao">
+                                <div class="botoes">
+                                    <div class="botaoFiltrar">
+                                        <a id="botaoFiltrar" disabled="">Filtrar</a>
                                     </div>
                                 </div>
                             </div>
@@ -48,42 +76,43 @@
                     </div>
                 </div>
             </div>
-
         </div>
+    </div>
 
-    </header>
-    <section>
-        <div class="grafico">
-            <canvas id="grafico1" width="1000" height="500" tipo-grafico="Temperatura/UmidadeRelativa"></canvas>
-        </div>
-    </section>
 
-    <section>
-        <div class="grafico">
-            <canvas id="grafico2" width="1000" height="500" tipo-grafico="Precipitacao/Pressao"></canvas>
-        </div>
-    </section>
+    <div id="todosGraficos">
+        <section>
+            <div class="grafico">
+                <canvas id="grafico1" width="1100" height="500" tipo-grafico="Temperatura/UmidadeRelativa"></canvas>
+            </div>
+        </section>
 
-    <section>
-        <div class="grafico" style=" width: 50%;">
-            <canvas id=" grafico3" width="500" height="500" tipo-grafico="DirecaoVento"></canvas>
-        </div>
-    </section>
+        <section>
+            <div class="grafico">
+                <canvas id="grafico2" width="1000" height="500" tipo-grafico="Precipitacao/Pressao"></canvas>
+            </div>
+        </section>
 
-    <section>
-        <div class="grafico">
-            <canvas id="grafico4" width="1000" height="500" tipo-grafico="VelocidadesVento"></canvas>
-        </div>
-    </section>
+        <section>
+            <div class="grafico" style=" width: 50%;">
+                <canvas id=" grafico3" width="500" height="500" tipo-grafico="DirecaoVento"></canvas>
+            </div>
+        </section>
 
-    <section>
-        <div class="grafico">
-            <canvas id="grafico5" width="1000" height="500"
-                tipo-grafico="Precipitacao/UmidadeRelativa/UmidadeSolo"></canvas>
-        </div>
-    </section>
+        <section>
+            <div class="grafico">
+                <canvas id="grafico4" width="1000" height="500" tipo-grafico="VelocidadesVento"></canvas>
+            </div>
+        </section>
 
-    <script type="module" src=" ../js/script.js"></script>
+        <section>
+            <div class="grafico">
+                <canvas id="grafico5" width="1000" height="500"
+                    tipo-grafico="Precipitacao/UmidadeRelativa/UmidadeSolo"></canvas>
+            </div>
+        </section>
+    </div>
+    <script type="module" src=" ../js/scriptFiltragem.js"></script>
     <script src="../modules/axios-0.27.2/dist/axios.min.js"></script>
     <script src="../../node_modules/moment/moment.js"></script>
     <script src="../modules/chart.js-3.8.0/dist/chart.js"></script>

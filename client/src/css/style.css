@@ -80,16 +80,116 @@ header {
   transition-delay: 0s;
   border-bottom: 1px solid rgb(255, 255, 255);
 }
-header .content {
+
+.header a {
+  float: left;
+  color: white;
+  text-align: center;
+  padding: 8px;
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 25px;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+
+.header a:hover {
+  background-color: rgba(26, 26, 26, 0.5);
+  color: white;
+}
+
+.header a.active {
+  border-radius: 4px;
+  border-style: solid;
+  border-color: yellow;
+  border-width: 1px;
+  color: white;
+}
+
+.direita {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  margin: 0px;
+  margin-right: 20px;
+  align-items: center;
+}
+
+.content {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  /* 
+  .dropdown {
+    display: inline-block;
+    position: relative;
+    left: -40px;
+    img {
+      width: 60px;
+      height: auto;
+    }
+  }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+
+    overflow: auto;
+    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.4);
+  }
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  .dropdown-content a {
+    display: block;
+    color: #000000;
+    padding: 5px;
+    text-decoration: none;
+  }
+  .dropdown-content a:hover {
+    color: #ffffff;
+    background-color: #00a4bd;
+  } */
+  /* .filtrar {
+      display: flex;
+      margin-right: 20px;
+      align-items: center;
+      .filtros {
+        align-items: center;
+        h3 {
+          font-size: 14px;
+        }
+        a {
+          border: 1px solid white;
+          border-radius: 4px;
+          padding: 5px;
+        }
+        .data {
+          display: flex;
+          align-items: baseline;
+          h3 {
+            margin-right: 10px;
+          }
+          .entrada-data {
+            display: flex;
+            align-items: center;
+            h4 {
+              font-size: 14px;
+            }
+            input {
+              margin-left: 10px;
+              margin-right: 20px;
+            }
+          }
+        }
+      }
+    } */
 }
-header .content .conteudo {
+.content .conteudo {
   display: inline-flex;
   justify-content: space-between;
 }
-header .content .esquerda {
+.content .esquerda {
   display: flex;
   justify-content: flex-start;
   flex-wrap: nowrap;
@@ -97,11 +197,11 @@ header .content .esquerda {
   align-items: center;
   margin-left: 20px;
 }
-header .content .esquerda h1 {
+.content .esquerda h1 {
   font-family: "Montserrat", sans-serif;
   font-size: 1.7em;
 }
-header .content .esquerda a {
+.content .esquerda a {
   float: left;
   text-align: center;
   padding: 8px;
@@ -110,43 +210,9 @@ header .content .esquerda a {
   line-height: 25px;
   cursor: pointer;
 }
-header .content .esquerda a img {
+.content .esquerda a img {
   width: 200px;
   height: auto;
-}
-header .content .filtrar {
-  display: flex;
-  margin-right: 20px;
-  align-items: center;
-}
-header .content .filtrar .filtros {
-  align-items: center;
-}
-header .content .filtrar .filtros h3 {
-  font-size: 14px;
-}
-header .content .filtrar .filtros a {
-  border: 1px solid white;
-  border-radius: 4px;
-  padding: 5px;
-}
-header .content .filtrar .filtros .data {
-  display: flex;
-  align-items: baseline;
-}
-header .content .filtrar .filtros .data h3 {
-  margin-right: 10px;
-}
-header .content .filtrar .filtros .data .entrada-data {
-  display: flex;
-  align-items: center;
-}
-header .content .filtrar .filtros .data .entrada-data h4 {
-  font-size: 14px;
-}
-header .content .filtrar .filtros .data .entrada-data input {
-  margin-left: 10px;
-  margin-right: 20px;
 }
 
 section {
@@ -225,6 +291,99 @@ section .grafico {
   align-content: center;
   justify-content: center;
   align-items: center;
+}
+
+.opcoes {
+  width: 100%;
+  height: auto;
+  min-height: 120px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  color: black;
+}
+
+.opcoes div.ordenar {
+  padding: 0px 10px;
+  margin: 0px 0px;
+  margin-top: 20px;
+  margin-right: 40px;
+  margin-left: 40px;
+  font-size: 0.8em;
+  transition: 0.2s;
+  border-radius: 8px;
+  border-color: #ff6900;
+  border-style: solid;
+  border-width: 0.1em;
+  width: 100%;
+}
+@media screen and (max-width: 600px) {
+  .opcoes div.ordenar {
+    max-width: 300px;
+    padding: 0px 10px;
+    min-width: 260px;
+    margin-right: 0px;
+  }
+}
+.opcoes div.ordenar a {
+  cursor: pointer;
+}
+.opcoes div.ordenar div.ordenacaoInline {
+  display: flex;
+  flex-direction: column;
+}
+
+.opcoes div.texto {
+  overflow: hidden;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+}
+.opcoes div.texto span {
+  margin-right: 5px;
+}
+
+.ordenar div.selecao {
+  overflow: hidden;
+  margin: 10px 15px;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  cursor: default;
+  min-height: 60px;
+}
+
+.opcoes div.texto h2 {
+  margin: 10px 0px;
+  margin-left: 10px;
+}
+
+.ordenar div.selecao h3 {
+  margin: 0px;
+  margin-top: 10px;
+}
+
+.alternaTipos {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.alternaTipos .botaoFiltrar {
+  padding: 10px;
+  border: 1px solid rgb(3, 37, 65);
+  border-radius: 4px;
+}
+
+.closed {
+  display: none;
 }
 
 /*# sourceMappingURL=style.css.map */

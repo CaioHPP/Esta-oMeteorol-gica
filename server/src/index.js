@@ -1,4 +1,5 @@
 import express from "express";
+import moment from "moment";
 import { PrismaClient } from "@prisma/client";
 
 const app = express();
@@ -9,7 +10,7 @@ const prisma = new PrismaClient();
 app.use(express.json());
 
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+  res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, GET"
@@ -39,58 +40,68 @@ app.get("/leitura/recentes", async (req, res) => {
 });
 
 app.get("/leitura/filtrado", async (req, res) => {
-  let datamin = new Date(req.query.datamin);
-  let datamax = new Date(req.query.datamax);
-
-  const leitura = await prisma.leitura.findMany({
-    where: {
-      createdAt: {
-        gte: datamin,
-        lt: datamax,
+  let datamin = req.query.datamin;
+  let datamax = req.query.datamax;
+  if (moment(datamin).isValid() && moment(datamax).isValid()) {
+    const leitura = await prisma.leitura.findMany({
+      where: {
+        createdAt: {
+          gte: datamin,
+          lt: datamax,
+        },
       },
-    },
-    include: {
-      Temperatura: true,
-      Pressao: true,
-      Altitude: true,
-      VelocidadeVento: true,
-      DirecaoVento: true,
-      Precipitacao: true,
-      UmidadeSolo: true,
-      UmidadeRelativa: true,
-    },
-    orderBy: {
-      id: "asc",
-    },
-  });
-  res.json(leitura);
+      include: {
+        Temperatura: true,
+        Pressao: true,
+        Altitude: true,
+        VelocidadeVento: true,
+        DirecaoVento: true,
+        Precipitacao: true,
+        UmidadeSolo: true,
+        UmidadeRelativa: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+    res.json(leitura);
+  } else {
+    res.json({
+      error: "Data inválida",
+    });
+  }
 });
 
 app.get("/leitura/dia", async (req, res) => {
   let data = new Date(req.query.data);
-
-  const leitura = await prisma.leitura.findMany({
-    where: {
-      createdAt: {
-        gte: data,
-        lt: new Date(data.getTime() + 86400000), //86400000 = 1 dia
+  if (moment(data).isValid()) {
+    const leitura = await prisma.leitura.findMany({
+      where: {
+        createdAt: {
+          gte: data,
+          lt: new Date(data.getTime() + 86400000), //86400000 = 1 dia
+        },
       },
-    },
-    include: {
-      Temperatura: true,
-      Pressao: true,
-      Altitude: true,
-      VelocidadeVento: true,
-      DirecaoVento: true,
-      Precipitacao: true,
-      UmidadeSolo: true,
-      UmidadeRelativa: true,
-    },
-    orderBy: {
-      id: "asc",
-    },
-  });
-  res.json(leitura);
+      include: {
+        Temperatura: true,
+        Pressao: true,
+        Altitude: true,
+        VelocidadeVento: true,
+        DirecaoVento: true,
+        Precipitacao: true,
+        UmidadeSolo: true,
+        UmidadeRelativa: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+    res.json(leitura);
+  } else {
+    res.json({
+      error: "Data inválida",
+    });
+  }
 });
 
 /* SE HOUVER REDUNDANCIA DE SENSORES, 

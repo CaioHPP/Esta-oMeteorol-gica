@@ -3,17 +3,135 @@ import { getFiltrado } from "./serviçoAPI.js"; // Importa o serviço
 import { getDia } from "./serviçoAPI.js"; // Importa o serviço
 
 window.onload = async function () {
-  const params = new URLSearchParams(window.location.search);
   let dados = []; // array que vai receber os dados
-
-  dados = await getRecentes().then(({ data }) => {
-    return data;
-  });
-  dados.reverse();
-
   let mediaDirecaoVento = "";
   let mediaVelocidadeVento = [];
-  let ultimaLeitura = dados[dados.length - 1]; // pega a ultima leitura
+  let labels = [];
+  let datasets = []; // cria um array de datasets
+
+  window.abrirAba = function (id) {
+    let tagDivPai = document.getElementById(id);
+    let tagDivFilho = tagDivPai.children.aba.classList;
+    tagDivFilho.toggle("closed");
+    tagDivFilho.contains("closed")
+      ? (tagDivPai.getElementsByTagName(
+          "span"
+        ).icone.innerHTML = `<img src="../icons/direita.png">`)
+      : (tagDivPai.getElementsByTagName(
+          "span"
+        ).icone.innerHTML = `<img src="../icons/baixo.png">`);
+  };
+
+  const ordem = document.getElementById("tipoFiltragem");
+  ordem.onchange = function () {
+    document.getElementById("entradaPeriodo").classList.toggle("closed");
+    document.getElementById("entradaDia").classList.toggle("closed");
+  };
+
+  const datamin = document.getElementById("dataMin");
+  const datamax = document.getElementById("dataMax");
+  const data = document.getElementById("data");
+  const botaoFiltrar = document.getElementById("botaoFiltrar");
+
+  let agora = new Date(Date.now()).toISOString();
+  datamin.max = agora.substring(0, ((agora.indexOf("T") | 0) + 6) | 0);
+  data.max = agora.substring(0, ((agora.indexOf("T") | 0) + 6) | 0);
+
+  datamin.onchange = function (e) {
+    datamax.disabled = false;
+    datamax.min = datamin.value;
+    let data = new Date(datamin.value);
+    data.setDate(data.getDate() + 7);
+    data = data.toISOString();
+    data = data.substring(0, ((data.indexOf("T") | 0) + 6) | 0);
+    datamax.max = data;
+  };
+
+  botaoFiltrar.onclick = async function () {
+    dados = []; // array que vai receber os dados
+    mediaDirecaoVento = "";
+    mediaVelocidadeVento = [];
+
+    labels = [];
+    datasets = [];
+    limpaGraficos();
+    const tipoFiltragem = document.getElementById("tipoFiltragem").value;
+    console.log(tipoFiltragem, datamin.value, datamax.value, data.value);
+    if (tipoFiltragem === "periodo") {
+      if (moment(datamin.value).isValid() && moment(datamax.value).isValid()) {
+        let dataMinFormatada = moment(datamin.value.substring(0, 13)).format();
+        let dataMaxFormatada = moment(datamax.value.substring(0, 13)).format();
+        console.log(dataMinFormatada, dataMaxFormatada);
+        dados = await getFiltrado(dataMinFormatada, dataMaxFormatada);
+        if (dados.length == 0) {
+          alert("Não há dados para o período selecionado");
+          window.location = "./index.html"; // redireciona para a página inicial
+        } else if (dados.length > 72) {
+          dados = dados.filter((leitura) => {
+            let data = new Date(leitura.createdAt).toISOString();
+            return (
+              data.endsWith("T00:00:00.000Z") ||
+              data.endsWith("T03:00:00.000Z") ||
+              data.endsWith("T06:00:00.000Z") ||
+              data.endsWith("T09:00:00.000Z") ||
+              data.endsWith("T12:00:00.000Z") ||
+              data.endsWith("T15:00:00.000Z") ||
+              data.endsWith("T18:00:00.000Z") ||
+              data.endsWith("T21:00:00.000Z")
+            );
+          });
+        }
+      } else {
+        alert("Data inválida");
+        window.location = "./filtrados.html"; // redireciona para a página inicial
+      }
+    } else if (tipoFiltragem === "dia") {
+      if (moment(data.value).isValid()) {
+        let dataFormatada = moment(data.value).format();
+        dados = await getDia(dataFormatada);
+        dados = dados.filter((leitura) => {
+          let data = new Date(leitura.createdAt).toISOString();
+          return (
+            data.endsWith("T00:00:00.000Z") ||
+            data.endsWith("T01:00:00.000Z") ||
+            data.endsWith("T02:00:00.000Z") ||
+            data.endsWith("T03:00:00.000Z") ||
+            data.endsWith("T04:00:00.000Z") ||
+            data.endsWith("T05:00:00.000Z") ||
+            data.endsWith("T06:00:00.000Z") ||
+            data.endsWith("T07:00:00.000Z") ||
+            data.endsWith("T08:00:00.000Z") ||
+            data.endsWith("T09:00:00.000Z") ||
+            data.endsWith("T10:00:00.000Z") ||
+            data.endsWith("T11:00:00.000Z") ||
+            data.endsWith("T12:00:00.000Z") ||
+            data.endsWith("T13:00:00.000Z") ||
+            data.endsWith("T14:00:00.000Z") ||
+            data.endsWith("T15:00:00.000Z") ||
+            data.endsWith("T16:00:00.000Z") ||
+            data.endsWith("T17:00:00.000Z") ||
+            data.endsWith("T18:00:00.000Z") ||
+            data.endsWith("T19:00:00.000Z") ||
+            data.endsWith("T20:00:00.000Z") ||
+            data.endsWith("T21:00:00.000Z") ||
+            data.endsWith("T22:00:00.000Z") ||
+            data.endsWith("T23:00:00.000Z")
+          );
+        });
+        if (dados.length == 0) {
+          alert("Não há dados para o dia selecionado");
+          window.location = "./filtrados.html"; // redireciona para a página inicial
+        }
+      } else {
+        alert("Data inválida");
+        window.location = "./filtrados.html"; // redireciona para a página inicial
+      }
+    }
+    console.log(dados);
+    preencherDatasets(dados, datasets, dados[dados.length - 1]); // preenche os datasets
+    atualizaGraficos(); // atualiza os gráficos
+    botaoFiltrar.disabled = true;
+  };
 
   function retornaLeiturasPorSensor(nomeSensor, unidade) {
     const lista = dados.map((leitura) => {
@@ -25,9 +143,7 @@ window.onload = async function () {
     return lista;
   }
 
-  const labels = [];
-  const datasets = []; // cria um array de datasets
-  function preencherDatasets() {
+  function preencherDatasets(dados, datasets, ultimaLeitura) {
     // função que preenche o array de datasets
     let mediaTemperatura = new Array(dados.length).fill(0);
     ultimaLeitura.Temperatura.forEach((temperatura) => {
@@ -246,8 +362,6 @@ window.onload = async function () {
       labels.push(moment(leitura.createdAt)); // adiciona o horario da leitura ao array de labels
     });
   }
-
-  preencherDatasets(); // preenche os datasets
 
   function datasetsTemperatura() {
     const datasetsTemperatura = datasets.filter(
@@ -888,76 +1002,37 @@ window.onload = async function () {
       );
     });
   }
+  function limpaGraficos() {
+    const graficos = document.getElementById("todosGraficos");
+    graficos.innerHTML = `<section>
+    <div class="grafico">
+        <canvas id="grafico1" width="1100" height="500" tipo-grafico="Temperatura/UmidadeRelativa"></canvas>
+    </div>
+</section>
 
-  const atualizaUltimaLeitura = () => {
-    if (ultimaLeitura.Precipitacao[0].valor > 0) {
-      console.log(ultimaLeitura.Precipitacao[0].valor);
-      document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,#000000b3 0%,rgb(0 0 0 / 64%) 100%),url(../img/storm-clouds.jpg);";
-    } else {
-      document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,#000000b3 0%,rgb(0 0 0 / 64%) 100%),url(../img/bebe-sol-teletubbies.jpg);";
-    }
-    document.getElementById("temperaturaAtual").innerHTML = `${
-      ultimaLeitura.Temperatura[0].valor / 10
-    } ºC`;
-    document.getElementById(
-      "umidadeRelativaAtual"
-    ).innerHTML = `${ultimaLeitura.UmidadeRelativa[0].valor} %`;
-    document.getElementById("horarioAtual").innerHTML = `Atualizado às ${moment(
-      ultimaLeitura.createdAt
-    )
-      .utc()
-      .format("HH:mm:ss DD/MM/YYYY")}`;
-    document.getElementById(
-      "velocidadeVentoAtual"
-    ).innerHTML = `${mediaVelocidadeVento.toFixed(1)} km/h`;
+<section>
+    <div class="grafico">
+        <canvas id="grafico2" width="1000" height="500" tipo-grafico="Precipitacao/Pressao"></canvas>
+    </div>
+</section>
 
-    if (mediaDirecaoVento == "N") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(0deg)";
-    }
-    if (mediaDirecaoVento == "NE") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(45deg)";
-    }
-    if (mediaDirecaoVento == "L") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(90deg)";
-    }
-    if (mediaDirecaoVento == "SE") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(135deg)";
-    }
-    if (mediaDirecaoVento == "S") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(180deg)";
-    }
-    if (mediaDirecaoVento == "SO") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(225deg)";
-    }
-    if (mediaDirecaoVento == "O") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(270deg)";
-    }
-    if (mediaDirecaoVento == "NO") {
-      document.getElementById("direcaoVentoAtual").style.transform =
-        "rotate(315deg)";
-    }
+<section>
+    <div class="grafico" style=" width: 50%;">
+        <canvas id=" grafico3" width="500" height="500" tipo-grafico="DirecaoVento"></canvas>
+    </div>
+</section>
 
-    document.getElementById("precipitacaoAtual").innerHTML = `${
-      ultimaLeitura.Precipitacao[0].valor / 10
-    } mm`;
-    document.getElementById("pressaoAtual").innerHTML = `${
-      ultimaLeitura.Pressao[0].valor / 10
-    } hPa`;
-    document.getElementById(
-      "altitudeAtual"
-    ).innerHTML = `${ultimaLeitura.Altitude[0].valor} m`;
-  };
-  atualizaGraficos(); // atualiza os graficos
-  try {
-    atualizaUltimaLeitura(); // atualiza a ultima leitura
-  } catch (e) {}
+<section>
+    <div class="grafico">
+        <canvas id="grafico4" width="1000" height="500" tipo-grafico="VelocidadesVento"></canvas>
+    </div>
+</section>
+
+<section>
+    <div class="grafico">
+        <canvas id="grafico5" width="1000" height="500"
+            tipo-grafico="Precipitacao/UmidadeRelativa/UmidadeSolo"></canvas>
+    </div>
+</section>`;
+  }
 };
