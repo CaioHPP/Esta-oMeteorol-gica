@@ -30,6 +30,11 @@ Por fim, inicialize o servidor
 yarn node src/index.js
 ```
 
+Para recriar os arquivos de modelo, basta rodar o seguinte comando
+```shell
+yarn sequelize-auto -o "./models" -e sqlite -l esm -c ./config/config.json -T _prisma_migrations
+```
+
 ## Rotas
 
 - (GET) ´/leitura´ - Lista todas as leituras

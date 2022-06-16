@@ -4,6 +4,12 @@ const { Model, Sequelize } = _sequelize;
 export default class UmidadeSolo extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
+    id: {
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true
+    },
     sensor: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -21,8 +27,6 @@ export default class UmidadeSolo extends Model {
       allowNull: false
     },
     leituraId: {
-      autoIncrement: true,
-      primaryKey: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
