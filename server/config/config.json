@@ -1,0 +1,6 @@
+{
+  "storage": "./db/db.sqlite",
+  "dialect": "sqlite",
+  "logging": true,
+  "models": "./models"
+}
