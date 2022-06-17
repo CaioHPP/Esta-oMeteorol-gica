@@ -35,7 +35,7 @@ window.onload = async function () {
 
   let agora = new Date(Date.now()).toISOString();
   datamin.max = agora.substring(0, ((agora.indexOf("T") | 0) + 6) | 0);
-  data.max = agora.substring(0, ((agora.indexOf("T") | 0) + 6) | 0);
+  data.max = agora.substring(0, agora.indexOf("T"));
 
   datamin.onchange = function (e) {
     datamax.disabled = false;
@@ -70,14 +70,14 @@ window.onload = async function () {
           dados = dados.filter((leitura) => {
             let data = new Date(leitura.createdAt).toISOString();
             return (
-              data.endsWith("T00:00:00.000Z") ||
-              data.endsWith("T03:00:00.000Z") ||
-              data.endsWith("T06:00:00.000Z") ||
-              data.endsWith("T09:00:00.000Z") ||
-              data.endsWith("T12:00:00.000Z") ||
-              data.endsWith("T15:00:00.000Z") ||
-              data.endsWith("T18:00:00.000Z") ||
-              data.endsWith("T21:00:00.000Z")
+              data.includes("T00:00") ||
+              data.includes("T03:00") ||
+              data.includes("T06:00") ||
+              data.includes("T09:00") ||
+              data.includes("T12:00") ||
+              data.includes("T15:00") ||
+              data.includes("T18:00") ||
+              data.includes("T21:00")
             );
           });
         }
@@ -92,30 +92,30 @@ window.onload = async function () {
         dados = dados.filter((leitura) => {
           let data = new Date(leitura.createdAt).toISOString();
           return (
-            data.endsWith("T00:00:00.000Z") ||
-            data.endsWith("T01:00:00.000Z") ||
-            data.endsWith("T02:00:00.000Z") ||
-            data.endsWith("T03:00:00.000Z") ||
-            data.endsWith("T04:00:00.000Z") ||
-            data.endsWith("T05:00:00.000Z") ||
-            data.endsWith("T06:00:00.000Z") ||
-            data.endsWith("T07:00:00.000Z") ||
-            data.endsWith("T08:00:00.000Z") ||
-            data.endsWith("T09:00:00.000Z") ||
-            data.endsWith("T10:00:00.000Z") ||
-            data.endsWith("T11:00:00.000Z") ||
-            data.endsWith("T12:00:00.000Z") ||
-            data.endsWith("T13:00:00.000Z") ||
-            data.endsWith("T14:00:00.000Z") ||
-            data.endsWith("T15:00:00.000Z") ||
-            data.endsWith("T16:00:00.000Z") ||
-            data.endsWith("T17:00:00.000Z") ||
-            data.endsWith("T18:00:00.000Z") ||
-            data.endsWith("T19:00:00.000Z") ||
-            data.endsWith("T20:00:00.000Z") ||
-            data.endsWith("T21:00:00.000Z") ||
-            data.endsWith("T22:00:00.000Z") ||
-            data.endsWith("T23:00:00.000Z")
+            data.includes("T00:00") ||
+            data.includes("T01:00") ||
+            data.includes("T02:00") ||
+            data.includes("T03:00") ||
+            data.includes("T04:00") ||
+            data.includes("T05:00") ||
+            data.includes("T06:00") ||
+            data.includes("T07:00") ||
+            data.includes("T08:00") ||
+            data.includes("T09:00") ||
+            data.includes("T10:00") ||
+            data.includes("T11:00") ||
+            data.includes("T12:00") ||
+            data.includes("T13:00") ||
+            data.includes("T14:00") ||
+            data.includes("T15:00") ||
+            data.includes("T16:00") ||
+            data.includes("T17:00") ||
+            data.includes("T18:00") ||
+            data.includes("T19:00") ||
+            data.includes("T20:00") ||
+            data.includes("T21:00") ||
+            data.includes("T22:00") ||
+            data.includes("T23:00")
           );
         });
         if (dados.length == 0) {
@@ -156,8 +156,9 @@ window.onload = async function () {
 
       leitura.forEach((temperatura, indice) => {
         // percorre as leituras
-        data.push(temperatura.valor / 10); // adiciona o valor da leitura ao array de dados
-        mediaTemperatura[indice] += temperatura.valor / 10;
+        data.push(temperatura.valor * 10 ** temperatura.ordemGrandeza); // adiciona o valor da leitura ao array de dados
+        mediaTemperatura[indice] +=
+          temperatura.valor * 10 ** temperatura.ordemGrandeza; // adiciona o valor da leitura ao array de media
       });
       let datasetTemperatura = {
         // cria o dataset da temperatura
@@ -191,7 +192,7 @@ window.onload = async function () {
       const leitura = retornaLeiturasPorSensor(pressao.sensor, pressao.unidade); // pega as leituras do sensor
       let data = [];
       leitura.forEach((pressao) => {
-        data.push(pressao.valor / 10);
+        data.push(pressao.valor * 10 ** pressao.ordemGrandeza); // adiciona o valor da leitura ao array de dados
       });
       let datasetPressao = {
         label: pressao.sensor,
@@ -210,7 +211,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((umidadeRelativa) => {
-        data.push(umidadeRelativa.valor);
+        data.push(umidadeRelativa.valor * 10 ** umidadeRelativa.ordemGrandeza);
       });
       let datasetUmidadeRelativa = {
         label: umidadeRelativa.sensor,
@@ -229,7 +230,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((umidadeSolo) => {
-        data.push(umidadeSolo.valor);
+        data.push(umidadeSolo.valor * 10 ** umidadeSolo.ordemGrandeza);
       });
       let datasetUmidadeSolo = {
         label: umidadeSolo.sensor,
@@ -290,6 +291,8 @@ window.onload = async function () {
 
       leitura.forEach((direcaoVento, indice) => {
         if (leitura2[indice].media > 0) {
+          direcaoVento.valor =
+            direcaoVento.valor * 10 ** direcaoVento.ordemGrandeza;
           if (direcaoVento.valor <= 22.5 || direcaoVento.valor >= 337.5) {
             data.push("N");
           } else if (direcaoVento.valor <= 67.5) {
@@ -326,7 +329,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((precipitacao) => {
-        data.push(precipitacao.valor / 10);
+        data.push(precipitacao.valor * 10 ** precipitacao.ordemGrandeza);
       });
       let datasetPrecipitacao = {
         label: precipitacao.sensor,
@@ -345,7 +348,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((altitude) => {
-        data.push(altitude.valor / 10);
+        data.push(altitude.valor * 10 ** altitude.ordemGrandeza);
       });
       let datasetAltitude = {
         label: altitude.sensor,

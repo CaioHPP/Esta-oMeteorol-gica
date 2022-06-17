@@ -8,8 +8,6 @@
   "repository": "https://github.com/CaioHPP/EstacaoMeteorologica.git",
   "author": "CaioHPP <caioutf@gmail.com>",
   "dependencies": {
-    "@prisma/client": "3.14.0",
-    "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "moment": "^2.29.3",
     "sequelize-auto": "^0.8.8",
@@ -18,8 +16,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.16",
-    "prisma": "^3.14.0",
-    "prisma-erd-generator": "^0.11.4",
     "sequelize": "^6.20.1"
   }
 }

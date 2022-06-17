@@ -1,6 +1,6 @@
 $primario_1: rgb(255, 255, 255);
 $primario_2: rgb(44, 42, 42);
-$primario_3: #ff6900;
+$primario_3: rgb(254, 203, 41); // AMARELO UTFPR
 $primario_3_sombra: rgba(218, 165, 32, 0.4);
 $secundario_1: rgb(3, 37, 65);
 $secundario_2: #ff6900;
@@ -121,7 +121,7 @@ header {
 .header a.active {
   border-radius: 4px;
   border-style: solid;
-  border-color: yellow;
+  border-color: $primario_3;
   border-width: 1px;
   color: white;
 }
@@ -249,7 +249,7 @@ section {
     width: 100%;
     height: 100%;
     background-size: cover;
-
+    background-position: bottom;
     .local {
       display: flex;
 

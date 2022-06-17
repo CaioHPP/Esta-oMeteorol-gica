@@ -40,8 +40,10 @@ window.onload = async function () {
 
       leitura.forEach((temperatura, indice) => {
         // percorre as leituras
-        data.push(temperatura.valor / 10); // adiciona o valor da leitura ao array de dados
-        mediaTemperatura[indice] += temperatura.valor / 10;
+        data.push(temperatura.valor * 10 ** temperatura.ordemGrandeza); // adiciona o valor da leitura ao array de dados
+
+        mediaTemperatura[indice] +=
+          temperatura.valor * 10 ** temperatura.ordemGrandeza;
       });
       let datasetTemperatura = {
         // cria o dataset da temperatura
@@ -75,7 +77,7 @@ window.onload = async function () {
       const leitura = retornaLeiturasPorSensor(pressao.sensor, pressao.unidade); // pega as leituras do sensor
       let data = [];
       leitura.forEach((pressao) => {
-        data.push(pressao.valor / 10);
+        data.push(pressao.valor * 10 ** pressao.ordemGrandeza); // adiciona o valor da leitura ao array de dados
       });
       let datasetPressao = {
         label: pressao.sensor,
@@ -94,7 +96,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((umidadeRelativa) => {
-        data.push(umidadeRelativa.valor);
+        data.push(umidadeRelativa.valor * 10 ** umidadeRelativa.ordemGrandeza);
       });
       let datasetUmidadeRelativa = {
         label: umidadeRelativa.sensor,
@@ -113,7 +115,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((umidadeSolo) => {
-        data.push(umidadeSolo.valor);
+        data.push(umidadeSolo.valor * 10 ** umidadeSolo.ordemGrandeza);
       });
       let datasetUmidadeSolo = {
         label: umidadeSolo.sensor,
@@ -133,9 +135,15 @@ window.onload = async function () {
       let data = [];
       let data2 = [];
       leitura.forEach((velocidadeVento) => {
-        mediaVelocidadeVento.push(velocidadeVento.media * 0.36);
-        data.push(velocidadeVento.media * 0.36); // pega a media da velocidade de vento
-        data2.push(velocidadeVento.maximo * 0.36); // pega o maximo da velocidade de vento
+        mediaVelocidadeVento.push(
+          velocidadeVento.media * 10 ** velocidadeVento.ordemGrandeza * 3.6
+        ); // adiciona o valor da leitura ao array de media de velocidade de vento
+        data.push(
+          velocidadeVento.media * 10 ** velocidadeVento.ordemGrandeza * 3.6
+        ); // adiciona o valor medio da leitura ao array de dados
+        data2.push(
+          velocidadeVento.maximo * 10 ** velocidadeVento.ordemGrandeza * 3.6
+        ); // adiciona o valor maximo da leitura ao array de dados
       });
 
       mediaVelocidadeVento =
@@ -210,7 +218,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((precipitacao) => {
-        data.push(precipitacao.valor / 10);
+        data.push(precipitacao.valor * 10 ** precipitacao.ordemGrandeza);
       });
       let datasetPrecipitacao = {
         label: precipitacao.sensor,
@@ -229,7 +237,7 @@ window.onload = async function () {
       );
       let data = [];
       leitura.forEach((altitude) => {
-        data.push(altitude.valor / 10);
+        data.push(altitude.valor * 10 ** altitude.ordemGrandeza);
       });
       let datasetAltitude = {
         label: altitude.sensor,
@@ -243,7 +251,7 @@ window.onload = async function () {
     dados.forEach((leitura) => {
       // percorre os dados
 
-      labels.push(moment(leitura.createdAt)); // adiciona o horario da leitura ao array de labels
+      labels.push(moment(leitura.createdAt).format()); // adiciona o horario da leitura ao array de labels
     });
   }
 
@@ -891,24 +899,38 @@ window.onload = async function () {
 
   const atualizaUltimaLeitura = () => {
     if (ultimaLeitura.Precipitacao[0].valor > 0) {
-      console.log(ultimaLeitura.Precipitacao[0].valor);
+      if (
+        moment(ultimaLeitura.createdAt).format("HH") > 6 &&
+        moment(ultimaLeitura.createdAt).format("HH") < 18
+      ) {
+        document.getElementById("resumo").style =
+          "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.1) 0%,rgb(0 0 0 / 64%) 100%),url(../img/dia-chuvoso.jpg);";
+      } else {
+        document.getElementById("resumo").style =
+          "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.70) 0%,rgb(0 0 0 / 80%) 100%),url(../img/dia-chuvoso.jpg);";
+      }
+    } else if (
+      moment(ultimaLeitura.createdAt).format("HH") > 6 &&
+      moment(ultimaLeitura.createdAt).format("HH") < 18
+    ) {
       document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,#000000b3 0%,rgb(0 0 0 / 64%) 100%),url(../img/storm-clouds.jpg);";
+        "background-image: linear-gradient(to right,0 0%,rgb(0 0 0 / 64%) 100%),url(../img/bebe-sol-teletubbies.jpg);";
     } else {
       document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,#000000b3 0%,rgb(0 0 0 / 64%) 100%),url(../img/bebe-sol-teletubbies.jpg);";
+        "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.0) 0%,rgb(0 0 0 / 50%) 100%),url(../img/noite-estrelada.jpg);";
     }
-    document.getElementById("temperaturaAtual").innerHTML = `${
-      ultimaLeitura.Temperatura[0].valor / 10
-    } ºC`;
-    document.getElementById(
-      "umidadeRelativaAtual"
-    ).innerHTML = `${ultimaLeitura.UmidadeRelativa[0].valor} %`;
+
+    document.getElementById("temperaturaAtual").innerHTML = `${(
+      ultimaLeitura.Temperatura[0].valor *
+      10 ** ultimaLeitura.Temperatura[0].ordemGrandeza
+    ).toFixed(1)} ºC`;
+    document.getElementById("umidadeRelativaAtual").innerHTML = `${
+      ultimaLeitura.UmidadeRelativa[0].valor *
+      10 ** ultimaLeitura.UmidadeRelativa[0].ordemGrandeza
+    } %`;
     document.getElementById("horarioAtual").innerHTML = `Atualizado às ${moment(
       ultimaLeitura.createdAt
-    )
-      .utc()
-      .format("HH:mm:ss DD/MM/YYYY")}`;
+    ).format("HH:mm:ss DD/MM/YYYY")}`;
     document.getElementById(
       "velocidadeVentoAtual"
     ).innerHTML = `${mediaVelocidadeVento.toFixed(1)} km/h`;
@@ -946,15 +968,18 @@ window.onload = async function () {
         "rotate(315deg)";
     }
 
-    document.getElementById("precipitacaoAtual").innerHTML = `${
-      ultimaLeitura.Precipitacao[0].valor / 10
-    } mm`;
-    document.getElementById("pressaoAtual").innerHTML = `${
-      ultimaLeitura.Pressao[0].valor / 10
-    } hPa`;
-    document.getElementById(
-      "altitudeAtual"
-    ).innerHTML = `${ultimaLeitura.Altitude[0].valor} m`;
+    document.getElementById("precipitacaoAtual").innerHTML = `${(
+      ultimaLeitura.Precipitacao[0].valor *
+      10 ** ultimaLeitura.Precipitacao[0].ordemGrandeza
+    ).toFixed(1)} mm`;
+    document.getElementById("pressaoAtual").innerHTML = `${(
+      ultimaLeitura.Pressao[0].valor *
+      10 ** ultimaLeitura.Pressao[0].ordemGrandeza
+    ).toFixed(1)} hPa`;
+    document.getElementById("altitudeAtual").innerHTML = `${(
+      ultimaLeitura.Altitude[0].valor *
+      10 ** ultimaLeitura.Altitude[0].ordemGrandeza
+    ).toFixed(1)} m`;
   };
   atualizaGraficos(); // atualiza os graficos
   try {
