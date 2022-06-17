@@ -1,4 +1,4 @@
-const urlBackend = "http://127.0.0.1:3000/"; // url do backend
+const urlBackend = "http://127.0.0.1:3001/"; // url do backend
 
 export function getRecentes() {
   // Função que retorna os recentes

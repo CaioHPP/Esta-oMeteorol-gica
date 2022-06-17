@@ -65,7 +65,7 @@ window.onload = async function () {
         dados = await getFiltrado(dataMinFormatada, dataMaxFormatada);
         if (dados.length == 0) {
           alert("Não há dados para o período selecionado");
-          window.location = "./index.html"; // redireciona para a página inicial
+          window.location = "./filtrados.html"; // redireciona para a página inicial
         } else if (dados.length > 72) {
           dados = dados.filter((leitura) => {
             let data = new Date(leitura.createdAt).toISOString();

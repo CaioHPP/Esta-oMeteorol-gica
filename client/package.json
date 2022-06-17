@@ -10,6 +10,7 @@
     "chartjs-adapter-moment": "^1.0.0",
     "moment": "^2.29.3",
     "momentjs": "^2.0.0",
-    "sass": "^1.52.1"
+    "sass": "^1.52.1",
+    "serve": "^13.0.2"
   }
 }

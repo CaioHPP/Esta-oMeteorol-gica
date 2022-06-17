@@ -904,20 +904,20 @@ window.onload = async function () {
         moment(ultimaLeitura.createdAt).format("HH") < 18
       ) {
         document.getElementById("resumo").style =
-          "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.1) 0%,rgb(0 0 0 / 64%) 100%),url(../img/dia-chuvoso.jpg);";
+          "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.1) 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/dia-chuvoso.jpg);";
       } else {
         document.getElementById("resumo").style =
-          "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.70) 0%,rgb(0 0 0 / 80%) 100%),url(../img/dia-chuvoso.jpg);";
+          "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.70) 0%,rgb(0 0 0 / 80%) 100%),url(./src/img/dia-chuvoso.jpg);";
       }
     } else if (
       moment(ultimaLeitura.createdAt).format("HH") > 6 &&
       moment(ultimaLeitura.createdAt).format("HH") < 18
     ) {
       document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,0 0%,rgb(0 0 0 / 64%) 100%),url(../img/bebe-sol-teletubbies.jpg);";
+        "background-image: linear-gradient(to right,0 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/bebe-sol-teletubbies.jpg);";
     } else {
       document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.0) 0%,rgb(0 0 0 / 50%) 100%),url(../img/noite-estrelada.jpg);";
+        "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.0) 0%,rgb(0 0 0 / 50%) 100%),url(./src/img/noite-estrelada.jpg);";
     }
 
     document.getElementById("temperaturaAtual").innerHTML = `${(
