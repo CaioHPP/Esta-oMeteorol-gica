@@ -1,7 +1,9 @@
 import express from "express";
 import moment from "moment";
-import initModels from "../models/init-models.js";
 
+import initModels from "../models/init-models.js";
+import fs from "fs";
+import path from "path";
 import Sequelize from "sequelize";
 import Temperatura from "../models/Temperatura.js";
 import Pressao from "../models/Pressao.js";
@@ -13,7 +15,7 @@ import UmidadeSolo from "../models/UmidadeSolo.js";
 import UmidadeRelativa from "../models/UmidadeRelativa.js";
 
 const sequelize = new Sequelize({
-  storage: "./db/db.sqlite",
+  storage: "./db/database.db",
   dialect: "sqlite",
   logging: console.log,
   models: "./models",
@@ -51,6 +53,19 @@ app.get("/sync", async (req, res) => {
   } catch (error) {
     res.send("Unable to connect to the database: " + error);
   }
+});
+
+app.get("/popularDB", async (req, res) => {
+  await sequelize.sync({ force: true });
+  let __dirname = path.resolve();
+  const query = fs
+    .readFileSync(path.join(__dirname, "../sql/populate.sql"))
+    .toString();
+  let querys = query.split(";");
+  querys.forEach(async (query) => {
+    await sequelize.query(query, { raw: true });
+  });
+  res.send("Database populated successfully.");
 });
 
 app.get("/leitura/recentes", async (req, res) => {
@@ -107,6 +122,8 @@ app.get("/leitura/filtrado", async (req, res) => {
   let datamin = req.query.datamin;
   let datamax = req.query.datamax;
   if (moment(datamin).isValid() && moment(datamax).isValid()) {
+    datamin = moment(datamin).format("x");
+    datamax = moment(datamax).format("x");
     console.log(datamin, datamax);
     const leitura = await models.Leitura.findAll({
       where: {
@@ -171,11 +188,13 @@ app.get("/leitura/dia", async (req, res) => {
   let data = req.query.data;
   if (moment(data).isValid()) {
     // verifica se a data é válida
+    data = moment(data).format("x");
+    console.log(data);
     const leitura = await models.Leitura.findAll({
       where: {
         createdAt: {
           [Sequelize.Op.gte]: data, // >= data
-          [Sequelize.Op.lt]: moment(data).add(1, "days").format("YYYY-MM-DD"), // < data + 1 dia
+          [Sequelize.Op.lt]: Number(data) + 86400000, // < data + 1 dia
         },
       },
       include: [
@@ -371,4 +390,4 @@ app.listen(port, () => {
   console.log(`Rodando na porta ${port}`);
 });
 
-//localhost:3000/leitura?temperatura=BMP180$260$ºC$-1&temperatura=DHT11$220$ºC$-1&temperatura=Ferrinho$243$ºC$-1&pressao=BMP180$180$hPa$-1&altitude=BMP180$5958$m$-1&velocidadevento=anem$62$104$m/s$-1&direcaovento=anem$180$º$0&precipitacao=pluv$252$mm$-1&umidadesolo=umisolo$650$%$-1&umidaderelativa=umiar$125$%$-1
+//localhost:3001/leitura?temperatura=DHT11$260$°C$-1&temperatura=BMP180$220$°C$-1&temperatura=DS18B20$243$°C$-1&pressao=BMP180$180$hPa$-1&altitude=BMP180$5958$m$-1&velocidadevento=anemômetro$62$104$m/s$-1&direcaovento=biruta$180$°$0&precipitacao=pluviômetro$252$mm$-1&umidadesolo=sensorUmiSolo$650$%$-1&umidaderelativa=DHT11$125$%$-1

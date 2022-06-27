@@ -10,10 +10,10 @@ window.onload = async function () {
     return data;
   });
   dados.reverse();
-
   let mediaDirecaoVento = "";
   let mediaVelocidadeVento = [];
   let ultimaLeitura = dados[dados.length - 1]; // pega a ultima leitura
+  console.log(ultimaLeitura);
 
   function retornaLeiturasPorSensor(nomeSensor, unidade) {
     const lista = dados.map((leitura) => {

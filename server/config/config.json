@@ -1,5 +1,5 @@
 {
-  "storage": "./db/db.sqlite",
+  "storage": "./db/database.db",
   "dialect": "sqlite",
   "logging": true,
   "models": "./models"
