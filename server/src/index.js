@@ -1,6 +1,6 @@
 import express from "express";
 import moment from "moment";
-
+import bodyParser from "body-parser";
 import initModels from "../models/init-models.js";
 import fs from "fs";
 import path from "path";
@@ -26,7 +26,7 @@ const models = initModels(sequelize);
 const app = express();
 const port = 3001;
 
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -255,7 +255,7 @@ DEVE-SE RETIRAR O ARRAY.OF() */
 app.post("/leitura", async (req, res) => {
   const leitura = await models.Leitura.create({});
 
-  req.query.temperatura.forEach(async (temp) => {
+  req.body.temperatura.forEach(async (temp) => {
     const aux = temp.split("$");
     await models.Temperatura.create({
       sensor: aux[0],
@@ -265,7 +265,7 @@ app.post("/leitura", async (req, res) => {
       leituraId: leitura.id,
     });
   });
-  Array.of(req.query.pressao).forEach(async (press) => {
+  Array.of(req.body.pressao).forEach(async (press) => {
     const aux = press.split("$");
     await models.Pressao.create({
       sensor: aux[0],
@@ -275,7 +275,7 @@ app.post("/leitura", async (req, res) => {
       leituraId: leitura.id,
     });
   });
-  Array.of(req.query.altitude).forEach(async (alt) => {
+  Array.of(req.body.altitude).forEach(async (alt) => {
     const aux = alt.split("$");
     await models.Altitude.create({
       sensor: aux[0],
@@ -285,7 +285,7 @@ app.post("/leitura", async (req, res) => {
       leituraId: leitura.id,
     });
   });
-  Array.of(req.query.velocidadevento).forEach(async (vel) => {
+  Array.of(req.body.velocidadevento).forEach(async (vel) => {
     const aux = vel.split("$");
     await models.VelocidadeVento.create({
       sensor: aux[0],
@@ -296,7 +296,7 @@ app.post("/leitura", async (req, res) => {
       leituraId: leitura.id,
     });
   });
-  Array.of(req.query.direcaovento).forEach(async (dir) => {
+  Array.of(req.body.direcaovento).forEach(async (dir) => {
     const aux = dir.split("$");
     await models.DirecaoVento.create({
       sensor: aux[0],
@@ -306,7 +306,7 @@ app.post("/leitura", async (req, res) => {
       leituraId: leitura.id,
     });
   });
-  Array.of(req.query.precipitacao).forEach(async (prec) => {
+  Array.of(req.body.precipitacao).forEach(async (prec) => {
     const aux = prec.split("$");
     await models.Precipitacao.create({
       sensor: aux[0],
@@ -316,7 +316,7 @@ app.post("/leitura", async (req, res) => {
       leituraId: leitura.id,
     });
   });
-  Array.of(req.query.umidadesolo).forEach(async (umisolo) => {
+  Array.of(req.body.umidadesolo).forEach(async (umisolo) => {
     const aux = umisolo.split("$");
     await models.UmidadeSolo.create({
       sensor: aux[0],
@@ -326,7 +326,7 @@ app.post("/leitura", async (req, res) => {
       leituraId: leitura.id,
     });
   });
-  Array.of(req.query.umidaderelativa).forEach(async (umirel) => {
+  Array.of(req.body.umidaderelativa).forEach(async (umirel) => {
     const aux = umirel.split("$");
     await models.UmidadeRelativa.create({
       sensor: aux[0],
@@ -384,6 +384,11 @@ app.post("/leitura", async (req, res) => {
     ],
   });
   res.json(leituraFinal);
+});
+
+app.post("/teste", async (req, res) => {
+  console.log(req.body);
+  res.json(req.body);
 });
 
 app.listen(port, () => {
