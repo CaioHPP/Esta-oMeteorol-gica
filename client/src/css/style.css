@@ -384,7 +384,22 @@ section .grafico {
 }
 
 .closed {
-  display: none;
+  display: none !important;
+}
+
+.resultado {
+  color: black;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  margin-top: 40px;
+  align-content: center;
+}
+.resultado .erro {
+  width: 230px;
 }
 
 /*# sourceMappingURL=style.css.map */

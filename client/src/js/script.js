@@ -13,7 +13,6 @@ window.onload = async function () {
   let mediaDirecaoVento = "";
   let mediaVelocidadeVento = [];
   let ultimaLeitura = dados[dados.length - 1]; // pega a ultima leitura
-  console.log(ultimaLeitura);
 
   function retornaLeiturasPorSensor(nomeSensor, unidade) {
     const lista = dados.map((leitura) => {
@@ -694,8 +693,11 @@ window.onload = async function () {
           },
           tooltip: {
             callbacks: {
-              label: (item) =>
-                `${item.dataset.label}: ${item.formattedValue} %`,
+              label: (item) => {
+                return `${item.dataset.label}: ${item.formattedValue} % a ${
+                  item.chart.legend.legendItems[item.dataIndex].text
+                }`;
+              },
             },
           },
         },

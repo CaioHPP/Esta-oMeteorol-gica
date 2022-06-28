@@ -56,17 +56,13 @@ window.onload = async function () {
     datasets = [];
     limpaGraficos();
     const tipoFiltragem = document.getElementById("tipoFiltragem").value;
-    console.log(tipoFiltragem, datamin.value, datamax.value, data.value);
     if (tipoFiltragem === "periodo") {
       if (moment(datamin.value).isValid() && moment(datamax.value).isValid()) {
         let dataMinFormatada = moment(datamin.value.substring(0, 13)).format();
         let dataMaxFormatada = moment(datamax.value.substring(0, 13)).format();
-        console.log(dataMinFormatada, dataMaxFormatada);
         dados = await getFiltrado(dataMinFormatada, dataMaxFormatada);
-        if (dados.length == 0) {
-          alert("Não há dados para o período selecionado");
-          window.location = "./filtrados.html"; // redireciona para a página inicial
-        } else if (dados.length > 72) {
+
+        if (dados.length > 72) {
           dados = dados.filter((leitura) => {
             let data = new Date(leitura.createdAt).toISOString();
             return (
@@ -80,6 +76,17 @@ window.onload = async function () {
               data.includes("T21:00")
             );
           });
+        }
+        if (dados.length === 0) {
+          document.getElementById("erro").innerHTML =
+            "Não há dados para o período selecionado.";
+          document.getElementById("resultado").classList.remove("closed");
+        } else {
+          document.getElementById("resultado").classList.add("closed");
+
+          preencherDatasets(dados, datasets, dados[dados.length - 1]); // preenche os datasets
+          atualizaGraficos(); // atualiza os gráficos
+          botaoFiltrar.disabled = true;
         }
       } else {
         alert("Data inválida");
@@ -119,18 +126,21 @@ window.onload = async function () {
           );
         });
         if (dados.length == 0) {
-          alert("Não há dados para o dia selecionado");
-          window.location = "./filtrados.html"; // redireciona para a página inicial
+          document.getElementById("erro").innerHTML =
+            "Não há dados para o dia selecionado.";
+          document.getElementById("resultado").classList.remove("closed");
+        } else {
+          document.getElementById("resultado").classList.add("closed");
+
+          preencherDatasets(dados, datasets, dados[dados.length - 1]); // preenche os datasets
+          atualizaGraficos(); // atualiza os gráficos
+          botaoFiltrar.disabled = true;
         }
       } else {
         alert("Data inválida");
         window.location = "./filtrados.html"; // redireciona para a página inicial
       }
     }
-    console.log(dados);
-    preencherDatasets(dados, datasets, dados[dados.length - 1]); // preenche os datasets
-    atualizaGraficos(); // atualiza os gráficos
-    botaoFiltrar.disabled = true;
   };
 
   function retornaLeiturasPorSensor(nomeSensor, unidade) {
