@@ -40,32 +40,36 @@ app.use(function (req, res, next) {
 app.get("/test", async (req, res) => {
   try {
     await sequelize.authenticate();
-    res.send("Connection has been established successfully.");
+    res.send("Conexão estabelecida com o banco de dados.");
   } catch (error) {
-    res.send("Unable to connect to the database: " + error);
+    res.send("Erro na comunicação com o banco de dados: " + error);
   }
 });
 
 app.get("/sync", async (req, res) => {
   try {
     await sequelize.sync({ force: true });
-    res.send("Database synced successfully.");
+    res.send("Banco de dados sincronizado.");
   } catch (error) {
-    res.send("Unable to connect to the database: " + error);
+    res.send("Erro na sincronização do banco de dados: " + error);
   }
 });
 
 app.get("/popularDB", async (req, res) => {
-  await sequelize.sync({ force: true });
-  let __dirname = path.resolve();
-  const query = fs
-    .readFileSync(path.join(__dirname, "../sql/populate.sql"))
-    .toString();
-  let querys = query.split(";");
-  querys.forEach(async (query) => {
-    await sequelize.query(query, { raw: true });
-  });
-  res.send("Database populated successfully.");
+  try {
+    await sequelize.sync({ force: true });
+    let __dirname = path.resolve();
+    const query = fs
+      .readFileSync(path.join(__dirname, "../sql/populate.sql"))
+      .toString();
+    let querys = query.split(";");
+    querys.forEach(async (query) => {
+      await sequelize.query(query, { raw: true });
+    });
+    res.send("Banco de dados populado.");
+  } catch (error) {
+    res.send("Erro na população do banco de dados: " + error);
+  }
 });
 
 app.get("/leitura/recentes", async (req, res) => {
@@ -124,7 +128,6 @@ app.get("/leitura/filtrado", async (req, res) => {
   if (moment(datamin).isValid() && moment(datamax).isValid()) {
     datamin = moment(datamin).format("x");
     datamax = moment(datamax).format("x");
-    console.log(datamin, datamax);
     const leitura = await models.Leitura.findAll({
       where: {
         createdAt: {
@@ -384,11 +387,6 @@ app.post("/leitura", async (req, res) => {
     ],
   });
   res.json(leituraFinal);
-});
-
-app.post("/teste", async (req, res) => {
-  console.log(req.body);
-  res.json(req.body);
 });
 
 app.listen(port, () => {

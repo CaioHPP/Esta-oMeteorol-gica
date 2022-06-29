@@ -916,7 +916,7 @@ window.onload = async function () {
       moment(ultimaLeitura.createdAt).format("HH") < 18
     ) {
       document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,0 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/bebe-sol-teletubbies.jpg);";
+        "background-image: linear-gradient(to right,0 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/dia-ensolarado.jpg);";
     } else {
       document.getElementById("resumo").style =
         "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.0) 0%,rgb(0 0 0 / 50%) 100%),url(./src/img/noite-estrelada.jpg);";
