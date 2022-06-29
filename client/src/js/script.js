@@ -902,8 +902,8 @@ window.onload = async function () {
   const atualizaUltimaLeitura = () => {
     if (ultimaLeitura.Precipitacao[0].valor > 0) {
       if (
-        moment(ultimaLeitura.createdAt).format("HH") > 6 &&
-        moment(ultimaLeitura.createdAt).format("HH") < 18
+        moment(ultimaLeitura.createdAt).format("HH") >= 6 &&
+        moment(ultimaLeitura.createdAt).format("HH") <= 18
       ) {
         document.getElementById("resumo").style =
           "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.1) 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/dia-chuvoso.jpg);";
@@ -912,14 +912,14 @@ window.onload = async function () {
           "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.70) 0%,rgb(0 0 0 / 80%) 100%),url(./src/img/dia-chuvoso.jpg);";
       }
     } else if (
-      moment(ultimaLeitura.createdAt).format("HH") > 6 &&
-      moment(ultimaLeitura.createdAt).format("HH") < 18
+      moment(ultimaLeitura.createdAt).format("HH") >= 6 &&
+      moment(ultimaLeitura.createdAt).format("HH") <= 18
     ) {
       document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,0 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/dia-ensolarado.jpg);";
+        "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.1) 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/dia-ensolarado.jpg);";
     } else {
       document.getElementById("resumo").style =
-        "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.0) 0%,rgb(0 0 0 / 50%) 100%),url(./src/img/noite-estrelada.jpg);";
+        "background-image: linear-gradient(to right,rgba(0, 0, 0, 0.1) 0%,rgb(0 0 0 / 64%) 100%),url(./src/img/noite-estrelada.jpg);";
     }
 
     document.getElementById("temperaturaAtual").innerHTML = `${(
