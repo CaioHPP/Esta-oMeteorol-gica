@@ -1,6 +1,7 @@
 # Javascript Express Sequelize SQLite Server
 
-Esse é um servidor básico em Node.js, que utiliza Express (web framework), Sequelize (ORM) e SQLite (database) para rodar uma Estação Meteorológica via localhost.
+Esse é um servidor básico em Node.js, que utiliza Express (web framework), Sequelize (ORM) e SQLite (database) para rodar uma Estação Meteorológica via localhost. O frontend desenvolvido utiliza ChartJS e MomentJS para visualização de dados captados. 
+Os dados são captados em uma estação meteorológica desenvolvida utilizando uma RaspBerry Pi 1, portanto o servidor é capaz de ser utilizado em máquinas ARM32. As leituras captadas incluem Temperatura, Pressão, Umidade Relativa, Umidade do Relativa do Solo, Direção e Velocidade do Vento, Precipitação e Altitude. 
 
 ## Para rodar o projeto
 
