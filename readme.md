@@ -1,68 +1,68 @@
 # Javascript Express Sequelize SQLite Server
 
-Esse é um servidor básico em Node.js, que utiliza Express (web framework), Sequelize (ORM) e SQLite (database) para rodar uma Estação Meteorológica via localhost. O frontend desenvolvido utiliza ChartJS e MomentJS para visualização de dados captados. 
-Os dados são captados em uma estação meteorológica desenvolvida utilizando uma RaspBerry Pi 1, portanto o servidor é capaz de ser utilizado em máquinas ARM32. As leituras captadas incluem Temperatura, Pressão, Umidade Relativa, Umidade do Relativa do Solo, Direção e Velocidade do Vento, Precipitação e Altitude. 
+This is a basic server in Node.js, which uses Express (web framework), Sequelize (ORM), and SQLite (database) to run a Weather Station via localhost. The developed frontend uses ChartJS and MomentJS for data visualization.
+The data is captured in a weather station developed using a Raspberry Pi 1, so the server is capable of being used on ARM32 machines. The captured readings include Temperature, Pressure, Relative Humidity, Soil Relative Humidity, Wind Direction and Speed, Precipitation, and Altitude.
 
-## Para rodar o projeto
+## To run the project
 
-Primeiro clone o projeto
+First, clone the project
 
 ```shell
 git clone https://github.com/CaioHPP/EstacaoMeteorologica.git
 ```
 
-Depois, instale as dependencias
+Then, install the dependencies
 
 ```shell
 cd client && yarn install
 cd server && yarn install
 ```
 
-- Inicie o servidor
+- Start the server
 
 ```shell
 cd server && node src/index.js
 ```
 
-Depois, teste a conexão com o banco e inicialize as tabelas fazendo uma requisição GET para cada uma das linhas abaixo
+Then, test the database connection and initialize the tables by making a GET request to each of the lines below
 
 ```shell
 localhost:3001/test
 localhost:3001/sync
 ```
 
-Caso necessite recriar os arquivos de modelo, basta rodar o seguinte comando
+If you need to recreate the model files, just run the following command
 
 ```shell
 yarn sequelize-auto -o "./models" -e sqlite -l esm -c ./config/config.json -T _prisma_migrations
 ```
 
-**CUIDADO** `/sync` faz DROP e CREATE das tabelas, limpando todos os dados
+**CAUTION** `/sync` does DROP and CREATE of the tables, clearing all data
 
-- Inicialize a página.
+- Initialize the page.
 
-Isso pode ser feito utilizando o Live Server ou utilizando o Serve a partir do seguinte comando:
+This can be done using Live Server or using Serve with the following command:
 
 ```shell
 cd client && yarn serve
 ```
 
-## Função popularDB
+## Function populateDB
 
-Para testar a aplicação com dados gerados aleatóriamente entre as datas de 26/05/2022 a 01/06/2022, faça um get na seguinte URL:
+To test the application with randomly generated data between the dates of 26/05/2022 to 01/06/2022, make a GET request to the following URL:
 
 ```shell
 localhost:3001/popularDB
 ```
 
-## Rotas do servidor
+## Server routes
 
-- (GET) ´/leitura/recentes´ - Lista as últimas 30 leituras.
-- (GET) ´/leitura/filtrado´ - Lista as leituras filtradas por um período.
-- (GET) ´/leitura/dia´ - Lista as leituras filtradas por um único dia.
-- (POST) ´/leitura´ - Faz uma leitura.
+- (GET) ´/leitura/recentes´ - Lists the last 30 readings.
+- (GET) ´/leitura/filtrado´ - Lists the readings filtered by a period.
+- (GET) ´/leitura/dia´ - Lists the readings filtered by a single day.
+- (POST) ´/leitura´ - Makes a reading.
 
-## Referências
+## References
 
 - http://expressjs.com
 - https://sequelize.org/docs/v6/
